@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class EkoGra extends ApplicationAdapter {
-	// todo project
 	SpriteBatch batch;
 	Texture img;
 	
