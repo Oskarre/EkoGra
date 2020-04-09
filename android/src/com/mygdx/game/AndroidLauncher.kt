@@ -1,16 +1,13 @@
-package com.mygdx.game;
+package com.mygdx.game
 
-import android.os.Bundle;
+import android.os.Bundle
+import com.badlogic.gdx.backends.android.AndroidApplication
+import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
 
-import com.badlogic.gdx.backends.android.AndroidApplication;
-import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.mygdx.game.EkoGra;
-
-public class AndroidLauncher extends AndroidApplication {
-	@Override
-	protected void onCreate (Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		initialize(new EkoGra(), config);
-	}
+class AndroidLauncher : AndroidApplication() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val config = AndroidApplicationConfiguration()
+        initialize(EkoGra(), config)
+    }
 }
