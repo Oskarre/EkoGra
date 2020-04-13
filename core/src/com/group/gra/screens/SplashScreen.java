@@ -13,18 +13,20 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.group.gra.tween.SpriteAccessor;
 
-public class Splash implements Screen {
+public class SplashScreen implements Screen {
     public Sprite spriteBackground;
     private Sprite spriteTitle;
     private SpriteBatch sb;
     private TweenManager tweenmanager;
 
+    public SplashScreen(SpriteBatch sb) {
+        this.sb = sb;
+    }
+
     @Override
     public void show() {
-        sb = new SpriteBatch();
         spriteBackground = createSpriteBackground("backgroundTexture.jpg");
         spriteTitle = createSpriteTitle("title.png");
-
         initializeTweenManager();
     }
 

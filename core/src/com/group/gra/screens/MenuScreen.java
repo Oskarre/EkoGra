@@ -11,13 +11,13 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
 
 public class MenuScreen implements Screen {
     private Stage stage;
     private TextureAtlas atlas;
     private Skin skin;
-    private BitmapFont blackFont;
     private SpriteBatch sb;
 
     public MenuScreen(SpriteBatch sb) {
@@ -26,11 +26,11 @@ public class MenuScreen implements Screen {
 
     @Override
     public void show() {
-        stage = new Stage();
+        FitViewport viewPort = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
         atlas = new TextureAtlas("ui/uiskin.atlas");
         skin = new Skin(atlas);
-
         TextButton.TextButtonStyle textButtonStyle = createTextButtonStyle();
 
         TextButton buttonPlay = new TextButton("Play", textButtonStyle);
@@ -75,7 +75,7 @@ public class MenuScreen implements Screen {
     }
 
     private TextButton.TextButtonStyle createTextButtonStyle() {
-        blackFont = new BitmapFont(Gdx.files.internal("fonts/black.fnt"), false);
+        BitmapFont blackFont = new BitmapFont(Gdx.files.internal("fonts/black.fnt"), false);
 
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.up = skin.getDrawable("default-round");
@@ -117,6 +117,9 @@ public class MenuScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        atlas.dispose();
+        skin.dispose();
+        stage.dispose();
+        sb.dispose();
     }
 }

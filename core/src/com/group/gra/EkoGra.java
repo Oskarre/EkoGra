@@ -1,14 +1,17 @@
 package com.group.gra;
 
 import com.badlogic.gdx.Game;
-import com.group.gra.screens.Splash;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.group.gra.screens.SplashScreen;
 
 public class EkoGra extends Game {
     public static final String TITLE = "EkoGra";
+    public SpriteBatch sb;
 
     @Override
     public void create() {
-        setScreen(new Splash());
+        sb = new SpriteBatch();
+        setScreen(new SplashScreen(sb));
     }
 
     @Override
@@ -35,5 +38,4 @@ public class EkoGra extends Game {
     public void dispose() {
         super.dispose();
     }
-
 }
