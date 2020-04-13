@@ -22,7 +22,6 @@ public class GameScreen implements Screen {
     private Stage stage;
     private TextureAtlas atlas;
     private Skin skin;
-
     private SpriteBatch sb;
     public Sprite spriteBackground;
 
@@ -127,5 +126,10 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        atlas.dispose();
+        skin.dispose();
+        stage.dispose();
+        spriteBackground.getTexture().dispose();
+        sb.dispose();
     }
 }

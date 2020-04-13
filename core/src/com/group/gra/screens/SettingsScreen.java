@@ -126,6 +126,10 @@ public class SettingsScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        atlas.dispose();
+        skin.dispose();
+        stage.dispose();
+        spriteBackground.getTexture().dispose();
+        sb.dispose();
     }
 }

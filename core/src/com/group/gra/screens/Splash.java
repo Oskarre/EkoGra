@@ -89,8 +89,9 @@ public class Splash implements Screen {
 
     @Override
     public void dispose() {
-        sb.dispose();
         spriteBackground.getTexture().dispose();
         spriteTitle.getTexture().dispose();
+        tweenmanager.killAll();
+        sb.dispose();
     }
 }
