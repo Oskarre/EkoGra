@@ -14,46 +14,54 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.group.gra.tween.SpriteAccessor;
 
 public class Splash implements Screen {
-
-    private Sprite spriteBackground;
+    public Sprite spriteBackground;
     private Sprite spriteTitle;
-    private Texture backgroundTexture;
-    private Texture titleTexture;
     private SpriteBatch sb;
     private TweenManager tweenmanager;
 
     @Override
     public void show() {
         sb = new SpriteBatch();
-        tweenmanager = new TweenManager();
+        spriteBackground = createSpriteBackground("backgroundTexture.jpg");
+        spriteTitle = createSpriteTitle("title.png");
+
+        initializeTweenManager();
+    }
+
+    private Sprite createSpriteBackground(String spriteImage) {
+        Texture texture = new Texture(spriteImage);
+        Sprite sprite = new Sprite(texture);
+        sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        return sprite;
+    }
+
+    private Sprite createSpriteTitle(String spriteImage) {
+        Texture texture = new Texture(spriteImage);
+        Sprite sprite = new Sprite(texture);
+        sprite.setPosition(Gdx.graphics.getWidth() / 2 - sprite.getWidth() / 2, Gdx.graphics.getHeight() / 2 - sprite.getHeight() / 2);
+        return sprite;
+    }
+
+    private void initializeTweenManager() {
         Tween.registerAccessor(Sprite.class, new SpriteAccessor());
-
-        backgroundTexture = new Texture("backgroundTexture.jpg");
-        titleTexture = new Texture("title.png");
-        spriteBackground = new Sprite(backgroundTexture);
-        spriteTitle = new Sprite(titleTexture);
-
-        spriteBackground.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        spriteTitle.setPosition(Gdx.graphics.getWidth()/2-spriteTitle.getWidth()/2,Gdx.graphics.getHeight()/2-spriteTitle.getHeight()/2);
-
-        Tween.set(spriteTitle,SpriteAccessor.ALPHA).target(1).start(tweenmanager);
-        Tween.to(spriteTitle,SpriteAccessor.ALPHA,2).target(0).setCallback(new TweenCallback() {
+        tweenmanager = new TweenManager();
+        Tween.set(spriteTitle, SpriteAccessor.ALPHA).target(1).start(tweenmanager);
+        Tween.to(spriteTitle, SpriteAccessor.ALPHA, 2).target(0).setCallback(new TweenCallback() {
             @Override
             public void onEvent(int type, BaseTween<?> source) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new MenuScreen(sb));
             }
         }).start(tweenmanager);
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0,0,0,1); // sets the color
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // clearing with that color
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         tweenmanager.update(delta);
 
         sb.begin();
-        spriteTitle.draw(sb);
         spriteBackground.draw(sb);
         spriteTitle.draw(sb);
         sb.end();
