@@ -3,6 +3,7 @@ package com.group.gra.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,12 +13,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class GameScreen implements Screen {
     private Stage stage;
@@ -25,7 +28,7 @@ public class GameScreen implements Screen {
     private Skin skin;
     private SpriteBatch sb;
     public Sprite spriteBackground;
-
+    private FileHandle dirWithTextures;
     public GameScreen(SpriteBatch sb) {
         this.sb = sb;
     }
@@ -49,10 +52,17 @@ public class GameScreen implements Screen {
             }
         });
 
-        createBackground();
-        Label label = createLabel(font);
-        Table table = configureTable(label, buttonComeBack);
-        stage.addActor(table);
+        //createBackground();
+        //Label label = createLabel(font);
+        //Table table = configureTable(label, buttonComeBack);
+        ArrayList<Image> picturelist = selectTrashes();
+        //stage.addActor(table);
+        for (Image t: picturelist) {
+            t.setPosition(100, 200);// < -- set Position according to your requirement.
+            System.out.println(t.getY());
+            t.addAction(Actions.moveTo(300,200,3f));
+            stage.addActor(t);
+        }
     }
 
     private TextButton.TextButtonStyle createTextButtonStyle(BitmapFont font) {
@@ -93,6 +103,18 @@ public class GameScreen implements Screen {
         return table;
     }
 
+    public ArrayList<Image> selectTrashes() {
+        dirWithTextures = Gdx.files.internal("trashes/");
+        System.out.println(dirWithTextures.list()[0]);
+        ArrayList<Image> pictureList = new ArrayList<>();
+
+        for (int i = 0; i < dirWithTextures.list().length; i++) {
+            pictureList.add(new Image(new Texture(dirWithTextures.list()[i])));
+        };
+        Collections.shuffle(pictureList);
+        return pictureList;
+    }
+
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -100,7 +122,7 @@ public class GameScreen implements Screen {
 
 
         sb.begin();
-        spriteBackground.draw(sb);
+        //spriteBackground.draw(sb);
         sb.end();
         stage.act(delta);
         stage.draw();
