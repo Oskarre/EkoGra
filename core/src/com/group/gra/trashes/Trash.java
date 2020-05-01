@@ -1,37 +1,44 @@
 package com.group.gra.trashes;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
+public abstract class Trash extends Image {
+    public Image image;
+    protected String name;
 
-public class Trash extends Image {
-    private Image trash;
+    public Trash(String name, Image image) {
+        this.name = name;
+        this.image = image;
+    }
 
-    public Trash(Image trash) {
-        this.trash = trash;
+    public Image getImage() {
+        return image;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        trash.draw(batch, parentAlpha);
+        image.draw(batch, parentAlpha);
     }
 
     @Override
     public void setPosition(float x, float y, int alignment) {
-        trash.setPosition(x, y, alignment);
+        image.setPosition(x, y, alignment);
     }
 
     @Override
     public void addAction(Action action) {
-        trash.addAction(action);
+        image.addAction(action);
     }
 
     @Override
     public float getY() {
-        return trash.getY();
+        return image.getY();
     }
 }
