@@ -2,6 +2,7 @@ package com.group.gra.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -12,11 +13,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class SettingsScreen implements Screen {
@@ -36,12 +36,10 @@ public class SettingsScreen implements Screen {
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
         atlas = new TextureAtlas("ui/uiskin.atlas");
-        skin = new Skin(atlas);
+        skin = new Skin(Gdx.files.internal("ui/uiskin.json"),atlas);
 
-        BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/black.fnt"), false);
 
-        TextButton.TextButtonStyle textButtonStyle = createTextButtonStyle(font);
-        TextButton buttonComeBack = new TextButton("Powrót MainMenu", textButtonStyle);
+        TextButton buttonComeBack = new TextButton("Powrót MainMenu", skin);
         buttonComeBack.pad(20);
         buttonComeBack.addListener(new ClickListener() {
             @Override
@@ -49,49 +47,91 @@ public class SettingsScreen implements Screen {
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new MenuScreen(sb));
             }
         });
+        Preferences prefs = Gdx.app.getPreferences("EkoGra.settings");
+        final TextButton buttonGameMode;
+        final TextButton buttonSpeed = new TextButton(Integer.toString(prefs.getInteger("GAME_SPEED")), skin);;
 
+
+        String buttonGameModeText = "Przygodowy";
+        if(prefs.getInteger("GAME_MODE")==1)
+        {
+            buttonGameModeText="Przygodowy";
+            buttonSpeed.setTouchable(Touchable.disabled);
+        }
+        else if(prefs.getInteger("GAME_MODE")==2)
+        {
+            buttonGameModeText="Treningowy";
+            buttonSpeed.setTouchable(Touchable.enabled);
+        }
+        buttonGameMode = new TextButton(buttonGameModeText, skin);
+
+        buttonGameMode.pad(20);
+        buttonGameMode.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Preferences prefs = Gdx.app.getPreferences("EkoGra.settings");
+                int mode =  prefs.getInteger("GAME_MODE");
+                if(mode==1) {
+                    buttonGameMode.setText("Treningowy");
+                    prefs.putInteger("GAME_MODE",2);
+                    buttonSpeed.setTouchable(Touchable.enabled);
+                    buttonSpeed.setStyle(skin.get("disabled", TextButton.TextButtonStyle.class));
+                }
+                else if(mode==2){
+                    buttonGameMode.setText("Przygodowy");
+                    prefs.putInteger("GAME_MODE",1);
+                    buttonSpeed.setTouchable(Touchable.disabled);
+                    buttonSpeed.setStyle(skin.get("disabled", TextButton.TextButtonStyle.class));
+                }
+            }
+        });
+
+        buttonSpeed.pad(20);
+        buttonSpeed.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Preferences prefs = Gdx.app.getPreferences("EkoGra.settings");
+                if(prefs.getInteger("GAME_SPEED")==10){
+                    prefs.putInteger("GAME_SPEED",1);
+                }
+                else {
+                    prefs.putInteger("GAME_SPEED",prefs.getInteger("GAME_SPEED")+1);
+                }
+                buttonSpeed.setText(Integer.toString(prefs.getInteger("GAME_SPEED")));
+
+            }
+        });
         createBackground();
-        Label label = createLabel(font);
-        Table table = configureTable(label, buttonComeBack);
-        stage.addActor(table);
-    }
+        Label labelScreen = new Label("Ustawienia",skin);
+        Label labelGameMode = new Label("Tryb gry:",skin);
+        Label labelGameSpeed = new Label("Szybkość:",skin);
+        labelScreen.setAlignment(Align.center);
+        labelGameMode.setAlignment(Align.right);
+        labelGameSpeed.setAlignment(Align.right);
 
-    private TextButton.TextButtonStyle createTextButtonStyle(BitmapFont font) {
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.up = skin.getDrawable("default-round");
-        textButtonStyle.down = skin.getDrawable("default-round-down");
-        textButtonStyle.pressedOffsetX = 1;
-        textButtonStyle.pressedOffsetY = -1;
-        textButtonStyle.font = font;
-        return textButtonStyle;
+        Table table = new Table(skin);
+
+        table.setFillParent(true);
+        table.setDebug(false);
+        table.defaults().pad(10).fillX().uniform();
+        table.add(labelScreen).expandX().colspan(3).row();
+        table.add(labelGameMode);
+        table.add(buttonGameMode);
+        table.add().row();
+        table.add(labelGameSpeed);
+        table.add(buttonSpeed);
+        table.add().row();
+        table.add();
+        table.add(buttonComeBack);
+        table.add().row();
+        table.top();
+        stage.addActor(table);
     }
 
     private void createBackground() {
         Texture backgroundTexture = new Texture("settinsbackground.png");
         spriteBackground = new Sprite(backgroundTexture);
         spriteBackground.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-    }
-
-    private Label createLabel(BitmapFont font) {
-        Label.LabelStyle style = createLabelStyle(font);
-        return new Label("Ekran Settings", style);
-    }
-
-    private Label.LabelStyle createLabelStyle(BitmapFont font) {
-        Label.LabelStyle style = new Label.LabelStyle();
-        style.background = skin.getDrawable("textfield");
-        style.font = font;
-        style.fontColor = Color.BLACK;
-        return style;
-    }
-
-    private Table configureTable(Label label, TextButton buttonComeBack) {
-        Table table = new Table(skin);
-        table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        table.defaults().pad(10).fillX();
-        table.add(label).row();
-        table.add(buttonComeBack).row();
-        return table;
     }
 
     @Override
@@ -105,7 +145,6 @@ public class SettingsScreen implements Screen {
         stage.act(delta);
         stage.draw();
     }
-
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height);

@@ -37,10 +37,9 @@ public class GameScreen implements Screen {
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
         atlas = new TextureAtlas("ui/uiskin.atlas");
-        skin = new Skin(atlas);
+        skin = new Skin(Gdx.files.internal("ui/uiskin.json"),atlas);
 
-        TextButton.TextButtonStyle textButtonStyle = createTextButtonStyle(font);
-        TextButton buttonComeBack = new TextButton("Powrót MainMenu", textButtonStyle);
+        TextButton buttonComeBack = new TextButton("Powrót MainMenu", skin);
         buttonComeBack.pad(20);
         buttonComeBack.addListener(new ClickListener() {
             @Override
@@ -50,47 +49,21 @@ public class GameScreen implements Screen {
         });
 
         createBackground();
-        Label label = createLabel(font);
-        Table table = configureTable(label, buttonComeBack);
-        stage.addActor(table);
-    }
+        Label label = new Label("Ekran Game",skin);
 
-    private TextButton.TextButtonStyle createTextButtonStyle(BitmapFont font) {
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.up = skin.getDrawable("default-round");
-        textButtonStyle.down = skin.getDrawable("default-round-down");
-        textButtonStyle.pressedOffsetX = 1;
-        textButtonStyle.pressedOffsetY = -1;
-        textButtonStyle.font = font;
-        return textButtonStyle;
+        Table table = new Table(skin);
+        table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        table.defaults().pad(10).fillX();
+        table.add(label).row();
+        table.add(buttonComeBack).row();
+
+        stage.addActor(table);
     }
 
     private void createBackground() {
         Texture backgroundTexture = new Texture("grabackground.png");
         spriteBackground = new Sprite(backgroundTexture);
         spriteBackground.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-    }
-
-    private Label createLabel(BitmapFont font) {
-        Label.LabelStyle style = createLabelStyle(font);
-        return new Label("Ekran Game", style);
-    }
-
-    private Label.LabelStyle createLabelStyle(BitmapFont font) {
-        Label.LabelStyle style = new Label.LabelStyle();
-        style.background = skin.getDrawable("textfield");
-        style.font = font;
-        style.fontColor = Color.BLACK;
-        return style;
-    }
-
-    private Table configureTable(Label label, TextButton buttonComeBack) {
-        Table table = new Table(skin);
-        table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        table.defaults().pad(10).fillX();
-        table.add(label).row();
-        table.add(buttonComeBack).row();
-        return table;
     }
 
     @Override
