@@ -4,10 +4,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -19,7 +17,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import static com.group.gra.EkoGra.*;
+
 public class SettingsScreen implements Screen {
+    public static final String PRZYGODOWY = "Przygodowy";
+    public static final String TRENINGOWY = "Treningowy";
     private Stage stage;
     private TextureAtlas atlas;
     private Skin skin;
@@ -36,75 +38,25 @@ public class SettingsScreen implements Screen {
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
         atlas = new TextureAtlas("ui/uiskin.atlas");
-        skin = new Skin(Gdx.files.internal("ui/uiskin.json"),atlas);
-
+        skin = new Skin(Gdx.files.internal("ui/uiskin.json"), atlas);
+        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
 
         TextButton buttonComeBack = new TextButton("Powrót MainMenu", skin);
-        buttonComeBack.pad(20);
-        buttonComeBack.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new MenuScreen(sb));
-            }
-        });
-        Preferences prefs = Gdx.app.getPreferences("EkoGra.settings");
-        final TextButton buttonGameMode;
-        final TextButton buttonSpeed = new TextButton(Integer.toString(prefs.getInteger("GAME_SPEED")), skin);;
+        final TextButton buttonGameMode = createButtonGameMode(prefs);
+        final TextButton buttonSpeed = createButtonSpeed(prefs);
 
-
-        String buttonGameModeText = "Przygodowy";
-        if(prefs.getInteger("GAME_MODE")==1)
-        {
-            buttonGameModeText="Przygodowy";
-            buttonSpeed.setTouchable(Touchable.disabled);
-        }
-        else if(prefs.getInteger("GAME_MODE")==2)
-        {
-            buttonGameModeText="Treningowy";
-            buttonSpeed.setTouchable(Touchable.enabled);
-        }
-        buttonGameMode = new TextButton(buttonGameModeText, skin);
+        addButtonGameModeListener(buttonGameMode, buttonSpeed);
+        addButtonSpeedListener(buttonSpeed);
+        addButtonComeBackListener(buttonComeBack);
 
         buttonGameMode.pad(20);
-        buttonGameMode.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Preferences prefs = Gdx.app.getPreferences("EkoGra.settings");
-                int mode =  prefs.getInteger("GAME_MODE");
-                if(mode==1) {
-                    buttonGameMode.setText("Treningowy");
-                    prefs.putInteger("GAME_MODE",2);
-                    buttonSpeed.setTouchable(Touchable.enabled);
-                    buttonSpeed.setStyle(skin.get("disabled", TextButton.TextButtonStyle.class));
-                }
-                else if(mode==2){
-                    buttonGameMode.setText("Przygodowy");
-                    prefs.putInteger("GAME_MODE",1);
-                    buttonSpeed.setTouchable(Touchable.disabled);
-                    buttonSpeed.setStyle(skin.get("disabled", TextButton.TextButtonStyle.class));
-                }
-            }
-        });
-
         buttonSpeed.pad(20);
-        buttonSpeed.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Preferences prefs = Gdx.app.getPreferences("EkoGra.settings");
-                if(prefs.getInteger("GAME_SPEED")==10){
-                    prefs.putInteger("GAME_SPEED",1);
-                }
-                else {
-                    prefs.putInteger("GAME_SPEED",prefs.getInteger("GAME_SPEED")+1);
-                }
-                buttonSpeed.setText(Integer.toString(prefs.getInteger("GAME_SPEED")));
+        buttonComeBack.pad(20);
 
-            }
-        });
         createBackground();
-        Label labelScreen = new Label("Ustawienia",skin);
-        Label labelGameMode = new Label("Tryb gry:",skin);
-        Label labelGameSpeed = new Label("Szybkość:",skin);
+        Label labelScreen = new Label("Ustawienia", skin);
+        Label labelGameMode = new Label("Tryb gry:", skin);
+        Label labelGameSpeed = new Label("Szybkość:", skin);
         labelScreen.setAlignment(Align.center);
         labelGameMode.setAlignment(Align.right);
         labelGameSpeed.setAlignment(Align.right);
@@ -112,7 +64,7 @@ public class SettingsScreen implements Screen {
         Table table = new Table(skin);
 
         table.setFillParent(true);
-        table.setDebug(false);
+        table.setDebug(true);
         table.defaults().pad(10).fillX().uniform();
         table.add(labelScreen).expandX().colspan(3).row();
         table.add(labelGameMode);
@@ -128,6 +80,65 @@ public class SettingsScreen implements Screen {
         stage.addActor(table);
     }
 
+    private void addButtonComeBackListener(TextButton buttonComeBack) {
+        buttonComeBack.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new MenuScreen(sb));
+            }
+        });
+    }
+
+    private void addButtonSpeedListener(final TextButton buttonSpeed) {
+        buttonSpeed.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+                if (prefs.getInteger(GAME_SPEED) == 10) {
+                    prefs.putInteger(GAME_SPEED, 1);
+                } else {
+                    prefs.putInteger(GAME_SPEED, prefs.getInteger(GAME_SPEED) + 1);
+                }
+                buttonSpeed.setText(Integer.toString(prefs.getInteger(GAME_SPEED)));
+
+            }
+        });
+    }
+
+    private void addButtonGameModeListener(final TextButton buttonGameMode, final TextButton buttonSpeed) {
+        buttonGameMode.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+                int mode = prefs.getInteger(GAME_MODE);
+                if (mode == 1) {
+                    buttonGameMode.setText(TRENINGOWY);
+                    prefs.putInteger(GAME_MODE, 2);
+                    buttonSpeed.setTouchable(Touchable.enabled);
+                } else if (mode == 2) {
+                    buttonGameMode.setText(PRZYGODOWY);
+                    prefs.putInteger(GAME_MODE, 1);
+                    buttonSpeed.setTouchable(Touchable.disabled);
+                }
+            }
+        });
+    }
+    private TextButton createButtonGameMode(Preferences prefs) {
+        if (prefs.getInteger(GAME_MODE) == 1) {
+            return new TextButton(PRZYGODOWY, skin);
+        } else {
+            return new TextButton(TRENINGOWY, skin);
+        }
+    }
+    private TextButton createButtonSpeed(Preferences prefs) {
+        TextButton buttonSpeed = new TextButton(Integer.toString(prefs.getInteger(GAME_SPEED)), skin);
+        if (prefs.getInteger(GAME_MODE) == 1) {
+            buttonSpeed.setTouchable(Touchable.disabled);
+        } else {
+            buttonSpeed.setTouchable(Touchable.enabled);
+        }
+        return buttonSpeed;
+    }
     private void createBackground() {
         Texture backgroundTexture = new Texture("settinsbackground.png");
         spriteBackground = new Sprite(backgroundTexture);
@@ -145,6 +156,7 @@ public class SettingsScreen implements Screen {
         stage.act(delta);
         stage.draw();
     }
+
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height);

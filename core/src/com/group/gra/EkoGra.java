@@ -8,6 +8,10 @@ import com.group.gra.screens.SplashScreen;
 
 public class EkoGra extends Game {
     public static final String TITLE = "EkoGra";
+    public static final String GAME_MODE = "GAME_MODE";
+    public static final String GAME_SPEED = "GAME_SPEED";
+    public static final String SETTINGS_FILE = "EkoGra.settings";
+    private static final String FIRST_LAUNCH = "firstLaunch";
     public SpriteBatch sb;
 
     @Override
@@ -15,14 +19,13 @@ public class EkoGra extends Game {
         sb = new SpriteBatch();
         setScreen(new SplashScreen(sb));
 
-        //ustawienie wartosci domyslnych ustawien jeśli jeszcze nie istnieją
-        Preferences prefs = Gdx.app.getPreferences("EkoGra.settings");
-        if(prefs.getBoolean("firstLaunch",true)) { //warunek przechodzi tylko za pierwszym odpaleniem aplikacji na urzadzeniu
-        prefs.putInteger("GAME_MODE",1);
-        prefs.putInteger("GAME_SPEED",1);
-        prefs.putBoolean("firstLaunch",false);
+        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+        if (prefs.getBoolean(FIRST_LAUNCH, true)) {
+            prefs.putInteger(GAME_MODE, 1);
+            prefs.putInteger(GAME_SPEED, 1);
+            prefs.putBoolean(FIRST_LAUNCH, false);
+        }
     }
-}
 
     @Override
     public void render() {
@@ -46,7 +49,7 @@ public class EkoGra extends Game {
 
     @Override
     public void dispose() {
-        Preferences prefs = Gdx.app.getPreferences("EkoGra.settings");
+        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
         prefs.flush();
         super.dispose();
     }
