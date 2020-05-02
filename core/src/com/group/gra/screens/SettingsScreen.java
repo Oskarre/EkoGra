@@ -18,22 +18,25 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.group.gra.EkoGra;
 
 public class SettingsScreen implements Screen {
     private Stage stage;
     private TextureAtlas atlas;
     private Skin skin;
-    private SpriteBatch sb;
+//    private SpriteBatch sb;
+    private EkoGra ekogra;
     public Sprite spriteBackground;
 
-    public SettingsScreen(SpriteBatch sb) {
-        this.sb = sb;
+
+    public SettingsScreen(EkoGra ekogra) {
+        this.ekogra = ekogra;
     }
 
     @Override
     public void show() {
         FitViewport viewPort = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        stage = new Stage(viewPort, sb);
+        stage = new Stage(viewPort, ekogra.sb);
         Gdx.input.setInputProcessor(stage);
         atlas = new TextureAtlas("ui/uiskin.atlas");
         skin = new Skin(atlas);
@@ -46,7 +49,7 @@ public class SettingsScreen implements Screen {
         buttonComeBack.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new MenuScreen(sb));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new MenuScreen(ekogra));
             }
         });
 
@@ -99,9 +102,9 @@ public class SettingsScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        sb.begin();
-        spriteBackground.draw(sb);
-        sb.end();
+        ekogra.sb.begin();
+        spriteBackground.draw(ekogra.sb);
+        ekogra.sb.end();
         stage.act(delta);
         stage.draw();
     }
@@ -132,6 +135,6 @@ public class SettingsScreen implements Screen {
         skin.dispose();
         stage.dispose();
         spriteBackground.getTexture().dispose();
-        sb.dispose();
+        ekogra.sb.dispose();
     }
 }

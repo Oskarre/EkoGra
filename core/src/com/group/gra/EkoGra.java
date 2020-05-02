@@ -7,11 +7,15 @@ import com.group.gra.screens.SplashScreen;
 public class EkoGra extends Game {
     public static final String TITLE = "EkoGra";
     public SpriteBatch sb;
+    public static final int V_WIDTH = 400;
+    public static final int V_HEIGHT = 208;
+    public static final float PPM = 100;
+
 
     @Override
     public void create() {
         sb = new SpriteBatch();
-        setScreen(new SplashScreen(sb));
+        setScreen(new SplashScreen(this));
     }
 
     @Override

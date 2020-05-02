@@ -11,16 +11,18 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.group.gra.EkoGra;
 import com.group.gra.tween.SpriteAccessor;
 
 public class SplashScreen implements Screen {
     public Sprite spriteBackground;
     private Sprite spriteTitle;
-    private SpriteBatch sb;
+//    private SpriteBatch sb;
+    private EkoGra ekogra;
     private TweenManager tweenmanager;
 
-    public SplashScreen(SpriteBatch sb) {
-        this.sb = sb;
+    public SplashScreen(EkoGra ekogra) {
+        this.ekogra = ekogra;
     }
 
     @Override
@@ -51,7 +53,7 @@ public class SplashScreen implements Screen {
         Tween.to(spriteTitle, SpriteAccessor.ALPHA, 2).target(0).setCallback(new TweenCallback() {
             @Override
             public void onEvent(int type, BaseTween<?> source) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new MenuScreen(sb));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new MenuScreen(ekogra));
             }
         }).start(tweenmanager);
     }
@@ -63,10 +65,10 @@ public class SplashScreen implements Screen {
 
         tweenmanager.update(delta);
 
-        sb.begin();
-        spriteBackground.draw(sb);
-        spriteTitle.draw(sb);
-        sb.end();
+        ekogra.sb.begin();
+        spriteBackground.draw(ekogra.sb);
+        spriteTitle.draw(ekogra.sb);
+        ekogra.sb.end();
     }
 
     @Override
@@ -94,6 +96,6 @@ public class SplashScreen implements Screen {
         spriteBackground.getTexture().dispose();
         spriteTitle.getTexture().dispose();
         tweenmanager.killAll();
-        sb.dispose();
+        ekogra.sb.dispose();
     }
 }

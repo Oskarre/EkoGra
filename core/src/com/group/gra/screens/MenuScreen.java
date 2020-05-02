@@ -12,22 +12,23 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.group.gra.EkoGra;
 
 
 public class MenuScreen implements Screen {
+    private EkoGra ekogra;
     private Stage stage;
     private TextureAtlas atlas;
     private Skin skin;
-    private SpriteBatch sb;
 
-    public MenuScreen(SpriteBatch sb) {
-        this.sb = sb;
+    public MenuScreen(EkoGra ekogra) {
+        this.ekogra = ekogra;
     }
 
     @Override
     public void show() {
         FitViewport viewPort = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        stage = new Stage(viewPort, sb);
+        stage = new Stage(viewPort, ekogra.sb);
         Gdx.input.setInputProcessor(stage);
         atlas = new TextureAtlas("ui/uiskin.atlas");
         skin = new Skin(atlas);
@@ -38,7 +39,7 @@ public class MenuScreen implements Screen {
         buttonPlay.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(sb));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new PlayScreen(ekogra));
             }
         });
 
@@ -47,7 +48,7 @@ public class MenuScreen implements Screen {
         buttonSettings.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new SettingsScreen(sb));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new SettingsScreen(ekogra));
             }
         });
 
@@ -120,6 +121,6 @@ public class MenuScreen implements Screen {
         atlas.dispose();
         skin.dispose();
         stage.dispose();
-        sb.dispose();
+
     }
 }
