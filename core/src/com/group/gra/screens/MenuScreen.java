@@ -30,60 +30,56 @@ public class MenuScreen implements Screen {
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
         atlas = new TextureAtlas("ui/uiskin.atlas");
-        skin = new Skin(atlas);
-        TextButton.TextButtonStyle textButtonStyle = createTextButtonStyle();
+        skin = new Skin(Gdx.files.internal("ui/uiskin.json"),atlas);
 
-        TextButton buttonPlay = new TextButton("Play", textButtonStyle);
+
+        TextButton buttonPlay = new TextButton("Play", skin);
+        TextButton buttonSettings = new TextButton("Settings", skin);
+        TextButton buttonQuit = new TextButton("Quit", skin);
+
+        addButtonPlayListener(buttonPlay);
+        addButtonSettingsListener(buttonSettings);
+        addButtonQuitListener(buttonQuit);
+
         buttonPlay.pad(20);
-        buttonPlay.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(sb));
-            }
-        });
-
-        TextButton buttonSettings = new TextButton("Settings", textButtonStyle);
         buttonSettings.pad(20);
-        buttonSettings.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new SettingsScreen(sb));
-            }
-        });
-
-        TextButton buttonQuit = new TextButton("Quit", textButtonStyle);
         buttonQuit.pad(20);
+
+        Table table = new Table(skin);
+        table.setFillParent(true);
+        table.defaults().pad(10).fillX();
+        table.add(buttonPlay).row();
+        table.add(buttonSettings).row();
+        table.add(buttonQuit).row();
+
+        stage.addActor(table);
+    }
+
+    private void addButtonQuitListener(TextButton buttonQuit) {
         buttonQuit.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.exit();
             }
         });
-
-        Table table = configureTable(buttonPlay, buttonSettings, buttonQuit);
-        stage.addActor(table);
     }
 
-    private Table configureTable(TextButton buttonPlay, TextButton buttonSettings, TextButton buttonExit) {
-        Table table = new Table(skin);
-        table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        table.defaults().pad(10).fillX();
-        table.add(buttonPlay).row();
-        table.add(buttonSettings).row();
-        table.add(buttonExit).row();
-        return table;
+    private void addButtonSettingsListener(TextButton buttonSettings) {
+        buttonSettings.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new SettingsScreen(sb));
+            }
+        });
     }
 
-    private TextButton.TextButtonStyle createTextButtonStyle() {
-        BitmapFont blackFont = new BitmapFont(Gdx.files.internal("fonts/black.fnt"), false);
-
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.up = skin.getDrawable("default-round");
-        textButtonStyle.down = skin.getDrawable("default-round-down");
-        textButtonStyle.pressedOffsetX = 1;
-        textButtonStyle.pressedOffsetY = -1;
-        textButtonStyle.font = blackFont;
-        return textButtonStyle;
+    private void addButtonPlayListener(TextButton buttonPlay) {
+        buttonPlay.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(sb));
+            }
+        });
     }
 
     @Override
