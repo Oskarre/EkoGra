@@ -64,7 +64,6 @@ public class SettingsScreen implements Screen {
         Table table = new Table(skin);
 
         table.setFillParent(true);
-        table.setDebug(true);
         table.defaults().pad(10).fillX().uniform();
         table.add(labelScreen).expandX().colspan(3).row();
         table.add(labelGameMode);
@@ -95,9 +94,9 @@ public class SettingsScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
                 if (prefs.getInteger(GAME_SPEED) == 10) {
-                    prefs.putInteger(GAME_SPEED, 1);
+                    prefs.putInteger(GAME_SPEED, 1).flush();
                 } else {
-                    prefs.putInteger(GAME_SPEED, prefs.getInteger(GAME_SPEED) + 1);
+                    prefs.putInteger(GAME_SPEED, prefs.getInteger(GAME_SPEED) + 1).flush();
                 }
                 buttonSpeed.setText(Integer.toString(prefs.getInteger(GAME_SPEED)));
 
@@ -113,11 +112,11 @@ public class SettingsScreen implements Screen {
                 int mode = prefs.getInteger(GAME_MODE);
                 if (mode == 1) {
                     buttonGameMode.setText(TRENINGOWY);
-                    prefs.putInteger(GAME_MODE, 2);
+                    prefs.putInteger(GAME_MODE, 2).flush();
                     buttonSpeed.setTouchable(Touchable.enabled);
                 } else if (mode == 2) {
                     buttonGameMode.setText(PRZYGODOWY);
-                    prefs.putInteger(GAME_MODE, 1);
+                    prefs.putInteger(GAME_MODE, 1).flush();
                     buttonSpeed.setTouchable(Touchable.disabled);
                 }
             }
