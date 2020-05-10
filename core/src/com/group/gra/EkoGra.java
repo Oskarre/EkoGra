@@ -24,6 +24,7 @@ public class EkoGra extends Game {
             prefs.putInteger(GAME_MODE, 1);
             prefs.putInteger(GAME_SPEED, 1);
             prefs.putBoolean(FIRST_LAUNCH, false);
+            prefs.flush();
         }
     }
 
@@ -49,8 +50,6 @@ public class EkoGra extends Game {
 
     @Override
     public void dispose() {
-        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
-        prefs.flush();
         super.dispose();
     }
 }
