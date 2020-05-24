@@ -139,7 +139,7 @@ public class SettingsScreen implements Screen {
         return buttonSpeed;
     }
     private void createBackground() {
-        Texture backgroundTexture = new Texture("settinsbackground.png");
+        Texture backgroundTexture = new Texture("gameScreenBackground.png");
         spriteBackground = new Sprite(backgroundTexture);
         spriteBackground.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }

@@ -25,7 +25,7 @@ public class SplashScreen implements Screen {
 
     @Override
     public void show() {
-        spriteBackground = createSpriteBackground("backgroundTexture.jpg");
+        spriteBackground = createSpriteBackground("gameScreenBackground.png");
         spriteTitle = createSpriteTitle("title.png");
         initializeTweenManager();
     }

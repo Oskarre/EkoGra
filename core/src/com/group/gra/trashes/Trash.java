@@ -11,6 +11,7 @@ public abstract class Trash extends Image {
     public Trash(String name, Image image) {
         this.name = name;
         this.image = image;
+     image.setSize(100,   50);
     }
 
     public Image getImage() {

@@ -4,7 +4,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -19,6 +20,7 @@ public class MenuScreen implements Screen {
     private TextureAtlas atlas;
     private Skin skin;
     private SpriteBatch sb;
+    public Sprite spriteBackground;
 
     public MenuScreen(SpriteBatch sb) {
         this.sb = sb;
@@ -30,7 +32,7 @@ public class MenuScreen implements Screen {
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
         atlas = new TextureAtlas("ui/uiskin.atlas");
-        skin = new Skin(Gdx.files.internal("ui/uiskin.json"),atlas);
+        skin = new Skin(Gdx.files.internal("ui/uiskin.json"), atlas);
 
 
         TextButton buttonPlay = new TextButton("Play", skin);
@@ -53,6 +55,8 @@ public class MenuScreen implements Screen {
         table.add(buttonQuit).row();
 
         stage.addActor(table);
+
+        createSpriteBackground();
     }
 
     private void addButtonQuitListener(TextButton buttonQuit) {
@@ -82,11 +86,20 @@ public class MenuScreen implements Screen {
         });
     }
 
+    private void createSpriteBackground() {
+        Texture backgroundTexture = new Texture("gameScreenBackground.png");
+        spriteBackground = new Sprite(backgroundTexture);
+        spriteBackground.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    }
+
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        sb.begin();
+        spriteBackground.draw(sb);
+        sb.end();
         stage.act(delta);
         stage.draw();
     }
@@ -116,6 +129,7 @@ public class MenuScreen implements Screen {
         atlas.dispose();
         skin.dispose();
         stage.dispose();
+        sb.dispose();
         sb.dispose();
     }
 }
