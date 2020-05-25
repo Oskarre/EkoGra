@@ -1,7 +1,9 @@
 package com.group.gra.screens;
 
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -27,11 +29,12 @@ public class GameScreen implements Screen {
     private Sprite bioContainer;
     private Sprite container;
     private Sprite maciag;
+    private Music backgroundMusic;
 
     public GameScreen(SpriteBatch sb) {
         this.sb = sb;
         spriteBackground = new Sprite(new Texture("gameScreenBackground.png"));
-        spriteBackground.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        spriteBackground.setSize(800, 480);
 
         plasticContainer = new Sprite(new Texture("plasticContainer.png"));
         plasticContainer.setSize(100, 100);
@@ -57,20 +60,24 @@ public class GameScreen implements Screen {
         container.setSize(100, 100);
         container.setPosition(600, 150);
         maciag = new Sprite(new Texture("maciag_1.png"));
-        maciag.setSize(800
+        maciag.setSize(1500
                 , 200);
-        maciag.setPosition(0, 0);
+        maciag.setPosition(-350, 0);
 
     }
 
     @Override
     public void show() {
-        FitViewport viewPort = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        FitViewport viewPort = new FitViewport(800, 480);
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
         displayTrashes();
-    }
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/gameScreenMusic.mp3"));
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(0.1f);
+        backgroundMusic.play();
 
+    }
     private void displayTrashes() {
         TrashGenerator generator = new TrashGenerator();
         Array<Trash> trashArray = generator.generateTrashArray(50);
@@ -123,7 +130,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
-
+        backgroundMusic.stop();
     }
 
     @Override
@@ -131,5 +138,6 @@ public class GameScreen implements Screen {
         stage.dispose();
         spriteBackground.getTexture().dispose();
         sb.dispose();
+        backgroundMusic.dispose();
     }
 }

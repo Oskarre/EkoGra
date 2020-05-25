@@ -3,8 +3,10 @@ package com.group.gra.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -21,7 +23,7 @@ public class MenuScreen implements Screen {
     private Skin skin;
     private SpriteBatch sb;
     public Sprite spriteBackground;
-
+    Music backgroundMusic;
     public MenuScreen(SpriteBatch sb) {
         this.sb = sb;
     }
@@ -34,6 +36,10 @@ public class MenuScreen implements Screen {
         atlas = new TextureAtlas("ui/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("ui/uiskin.json"), atlas);
 
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/menuScreenMusic.mp3"));
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(0.1f);
+        backgroundMusic.play();
 
         TextButton buttonPlay = new TextButton("Play", skin);
         TextButton buttonSettings = new TextButton("Settings", skin);
@@ -121,7 +127,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void hide() {
-
+        backgroundMusic.pause();
     }
 
     @Override
@@ -131,5 +137,6 @@ public class MenuScreen implements Screen {
         stage.dispose();
         sb.dispose();
         sb.dispose();
+        backgroundMusic.dispose();
     }
 }

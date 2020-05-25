@@ -75,7 +75,7 @@ public class SettingsScreen implements Screen {
         table.add();
         table.add(buttonComeBack);
         table.add().row();
-        table.top();
+        table.center();
         stage.addActor(table);
     }
 
