@@ -4,16 +4,23 @@ import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
+import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.group.gra.DragAndDropNew;
 import com.group.gra.trashes.Trash;
 import com.group.gra.trashes.TrashGenerator;
 
@@ -30,8 +37,11 @@ public class GameScreen implements Screen {
     private Sprite container;
     private Sprite maciag;
     private Music backgroundMusic;
+    private Skin skin;
+    private TextureAtlas atlas;
 
     public GameScreen(SpriteBatch sb) {
+
         this.sb = sb;
         spriteBackground = new Sprite(new Texture("gameScreenBackground.png"));
         spriteBackground.setSize(800, 480);
@@ -64,18 +74,46 @@ public class GameScreen implements Screen {
                 , 200);
         maciag.setPosition(-350, 0);
 
+
     }
 
     @Override
     public void show() {
+//        FitViewport viewPort = new FitViewport(800, 480);
+//        stage = new Stage(viewPort, sb);
+//        displayTrashes();
+//        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/gameScreenMusic.mp3"));
+//        backgroundMusic.setLooping(true);
+//        backgroundMusic.setVolume(0.1f);
+//        backgroundMusic.play();
         FitViewport viewPort = new FitViewport(800, 480);
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
-        displayTrashes();
-        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/gameScreenMusic.mp3"));
-        backgroundMusic.setLooping(true);
-        backgroundMusic.setVolume(0.1f);
-        backgroundMusic.play();
+        atlas = new TextureAtlas("ui/uiskin.atlas");
+        skin = new Skin(Gdx.files.internal("ui/uiskin.json"), atlas);
+
+        TrashGenerator generator = new TrashGenerator();
+        final Array<Trash> trashArray = generator.generateTrashArray(1);
+        final Image trash = trashArray.get(0).getImage();
+        trash.setBounds(100,100,100,100);
+        final SequenceAction sequence = new SequenceAction(Actions.hide(), Actions.delay(DELAY_TIME), Actions.show(),
+                Actions.moveTo(640, 100, 4f), Actions.hide());
+        trash.addAction(sequence);
+        stage.addActor(trash);
+
+        final DragAndDropNew dragAndDrop = new DragAndDropNew();
+        dragAndDrop.addSource(new DragAndDropNew.Source(trash) {
+            @Override
+            public DragAndDropNew.Payload dragStart(InputEvent event, float x, float y, int pointer) {
+                DragAndDropNew.Payload payload = new DragAndDropNew.Payload();
+                payload.setObject("Some Paylod!");
+                payload.setDragActor(getActor());
+                dragAndDrop.setDragActorPosition( getActor().getWidth()/2, -(getActor().getHeight()/2) );
+                getActor().removeAction(sequence);
+                return payload;
+            }
+        });
+
 
     }
     private void displayTrashes() {
