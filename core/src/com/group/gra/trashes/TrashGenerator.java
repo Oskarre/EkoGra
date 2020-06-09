@@ -41,37 +41,37 @@ public class TrashGenerator {
     }
 
     private Plastic generatePlasticTrash() {
-        String name = getProductName(JUICE_CARTON, CAN, YOGURT_CONTAINER, PLASTIC_BOTTLE, PLASTIC_BAG);
+        String name = getProductName(PLASTIC_1, PLASTIC_2, PLASTIC_3, PLASTIC_4, PLASTIC_5);
         String imageName = parseToFileDirectory(name);
         return new Plastic(name, imageName);
     }
 
     private Glass generateGlassTrash() {
-        String name = getProductName(BEER_BOTTLE, COSMETIC_BOTTLE, JAR, GLASS, OTHER_BOTTLE);
+        String name = getProductName(GLASS_1, GLASS_2, GLASS_3, GLASS_4, GLASS_5);
         String imageName = parseToFileDirectory(name);
         return new Glass(name, imageName);
     }
 
     private Paper generatePaperTrash() {
-        String name = getProductName(BOOK, NOTE_BOOK, NEWSPAPER, CARTOON, CARD);
+        String name = getProductName(PAPER_1, PAPER_2, PAPER_3, PAPER_4, PAPER_5);
         String imageName = parseToFileDirectory(name);
         return new Paper(name, imageName);
     }
 
     private Bio generateBioTrash() {
-        String name = getProductName(BANANA_SKIN, APPLE_STAB, LEAVES, BRANCH, LEES);
+        String name = getProductName(ORGANIC_1, ORGANIC_2, ORGANIC_3, ORGANIC_4, ORGANIC_5);
         String imageName = parseToFileDirectory(name);
         return new Bio(name, imageName);
     }
 
     private HazardousTrash generateHazardousTrash() {
-        String name = getProductName(BATTERY, FRIDGE, MOBILE_PHONE, HARDCORE, FLUORESCENT_LAMP);
+        String name = getProductName(EWASTE_1, EWASTE_2, EWASTE_3, EWASTE_4, EWASTE_5);
         String imageName = parseToFileDirectory(name);
         return new HazardousTrash(name, imageName);
     }
 
     private MixedTrash generateMixedTrash() {
-        String name = getProductName(BONE, EGG_SHELL, TISSUE, DOG_PILE, CLOTHES);
+        String name = getProductName(METAL_1, METAL_2, METAL_3, METAL_4, METAL_5);
         String imageName = parseToFileDirectory(name);
         return new MixedTrash(name, imageName);
     }
