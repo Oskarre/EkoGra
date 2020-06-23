@@ -37,8 +37,8 @@ public class SettingsScreen implements Screen {
         FitViewport viewPort = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
-        atlas = new TextureAtlas("ui/uiskin.atlas");
-        skin = new Skin(Gdx.files.internal("ui/uiskin.json"), atlas);
+        atlas = new TextureAtlas("ui/design.atlas");
+        skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
         Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
 
         TextButton buttonComeBack = new TextButton("Powrót MainMenu", skin);
