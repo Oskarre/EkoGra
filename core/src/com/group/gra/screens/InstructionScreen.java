@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.group.gra.uifactory.UIFactory;
@@ -29,12 +29,12 @@ public class InstructionScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         UIFactory uiFactory = new UIFactory();
         spriteBackground = uiFactory.createSpriteBackground("Instruction.jpg");
-        ImageButton returnButton = uiFactory.createReturnButton();
+        Button returnButton = uiFactory.createReturnButton();
         addReturnButtonListener(returnButton);
         stage.addActor(returnButton);
     }
 
-    private void addReturnButtonListener(ImageButton returnButton) {
+    private void addReturnButtonListener(Button returnButton) {
         returnButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

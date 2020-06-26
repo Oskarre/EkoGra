@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -42,7 +41,7 @@ public class SettingsScreen implements Screen {
         skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
         Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
 
-        TextButton buttonComeBack = new TextButton("Powrót MainMenu", buttonSkin);
+        TextButton buttonComeBack = new TextButton("Powrót", skin);
         final TextButton buttonGameMode = createButtonGameMode(prefs);
         final TextButton buttonSpeed = createButtonSpeed(prefs);
 

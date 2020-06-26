@@ -11,7 +11,7 @@ public class ResultMapper {
     public ResultMapper() {
     }
 
-    public Array<Result> mapToResultList(Array<com.group.gra.entities.ActorWithStatus> actorsWithStatus) {
+    public Array<Result> mapToResultList(Array<ActorWithStatus> actorsWithStatus) {
         Array<com.group.gra.entities.Result> resultList = new Array<>();
         for (ActorWithStatus actor : actorsWithStatus) {
             if (actor.getStatus().equals(com.group.gra.entities.ActorStatus.CorrectMatched)) {

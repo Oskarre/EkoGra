@@ -5,33 +5,18 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 
 public class UIFactory {
     public UIFactory() {
     }
 
-    public Label createCounterLabel(Integer labelValue) {
-        TextureAtlas atlas = new TextureAtlas("ui/uiskin.atlas");
-        Skin skin = new Skin(Gdx.files.internal("ui/uiskin.json"), atlas);
-        Label label = new Label(labelValue.toString(), skin);
+    public Label createLabel(String labelValue, int x, int y) {
+        TextureAtlas atlas = new TextureAtlas("ui/design.atlas");
+        Skin skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
+        Label label = new Label(labelValue, skin);
         label.setColor(Color.BLACK);
-        label.setBounds(600, 200, 100, 100);
-        return label;
-    }
-
-    public Label createLivesLabel(Integer labelValue) {
-        TextureAtlas atlas = new TextureAtlas("ui/uiskin.atlas");
-        Skin skin = new Skin(Gdx.files.internal("ui/uiskin.json"), atlas);
-        Label label = new Label(labelValue.toString(), skin);
-        label.setColor(Color.WHITE);
-        label.setBounds(600, 250, 100, 100);
+        label.setBounds(x, y, 100, 100);
         return label;
     }
 
@@ -42,10 +27,10 @@ public class UIFactory {
         return container;
     }
 
-    public ImageButton createReturnButton() {
-        Texture texture = new Texture("returnButton.png");
-        Drawable drawable = new TextureRegionDrawable(new TextureRegion(texture));
-        ImageButton returnButton = new ImageButton(drawable);
+    public Button createReturnButton() {
+        TextureAtlas atlas = new TextureAtlas("ui/design.atlas");
+        Skin skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
+        Button returnButton =  new Button(skin.get("return",Button.ButtonStyle.class));
         returnButton.setBounds(750, 0, 50, 50);
         return returnButton;
     }

@@ -15,20 +15,31 @@ public class LivesValidator {
     }
 
     public boolean hasUserLive() {
-        Array<ActorWithStatus> uncorrectMatches = new Array<>();
         Array<ActorWithStatus> states = removeStaticActors(lastActorsStates);
         Array<ActorWithStatus> actorStatuses = changeActorsStatusWhoWasRemovedBySequenceAction(actorsInGame, states);
-        findUncorrectMatches(uncorrectMatches, actorStatuses);
+        Array<ActorWithStatus> uncorrectMatches = findUncorrectMatches(actorStatuses);
         return !continueGame(uncorrectMatches);
     }
 
-    private void findUncorrectMatches(Array<ActorWithStatus> uncorecctMatches, Array<ActorWithStatus> states5) {
-        for (ActorWithStatus state : states5) {
-            if (state.getStatus().equals(com.group.gra.entities.ActorStatus.WrongMatched)
-                    || state.getStatus().equals(com.group.gra.entities.ActorStatus.Expired)) {
+    public  Array<ActorWithStatus>  findUncorrectMatches(Array<ActorWithStatus> states) {
+        Array<ActorWithStatus> uncorecctMatches = new Array<>();
+        for (ActorWithStatus state : states) {
+            if (state.getStatus().equals(ActorStatus.WrongMatched)
+                    || state.getStatus().equals(ActorStatus.Expired)) {
                 uncorecctMatches.add(state);
             }
         }
+        return uncorecctMatches;
+    }
+
+    public  Array<ActorWithStatus> findCorrectMatches(Array<ActorWithStatus> states) {
+        Array<ActorWithStatus> correctMatches = new Array<>();
+        for (ActorWithStatus state : states) {
+            if (state.getStatus().equals(ActorStatus.CorrectMatched)) {
+                correctMatches.add(state);
+            }
+        }
+        return correctMatches;
     }
 
     private boolean continueGame(Array<ActorWithStatus> chances) {
@@ -37,7 +48,7 @@ public class LivesValidator {
 
     private Array<ActorWithStatus> removeStaticActors(Array<ActorWithStatus> actorStates) {
         for (ActorWithStatus actorWithStatus : actorStates) {
-            if (actorWithStatus.getStatus().equals(com.group.gra.entities.ActorStatus.StaticActor)) {
+            if (actorWithStatus.getStatus().equals(ActorStatus.StaticActor)) {
                 actorStates.removeValue(actorWithStatus, false);
                 actorStates.removeValue(actorWithStatus, false);
             }
@@ -54,12 +65,12 @@ public class LivesValidator {
 
     private void removeActorsWhichCorrectOrUndefined(Array<Actor> inGame, Array<ActorWithStatus> actorStates) {
         for (Actor actor : inGame) {
-            removedActorByStatus(actorStates, actor, com.group.gra.entities.ActorStatus.CorrectMatched);
-            removedActorByStatus(actorStates, actor, com.group.gra.entities.ActorStatus.Touched);
+            removedActorByStatus(actorStates, actor, ActorStatus.CorrectMatched);
+            removedActorByStatus(actorStates, actor, ActorStatus.Touched);
         }
     }
 
-    private void removedActorByStatus(Array<ActorWithStatus> actorStates, Actor actor, com.group.gra.entities.ActorStatus correctMatched) {
+    private void removedActorByStatus(Array<ActorWithStatus> actorStates, Actor actor, ActorStatus correctMatched) {
         if (actorStates.contains(new ActorWithStatus(actor, correctMatched), false)) {
             actorStates.removeValue(new ActorWithStatus(actor, correctMatched), false);
         }
@@ -72,7 +83,7 @@ public class LivesValidator {
     }
 
     private void changeActorStatusToExpired(Array<Actor> inGame, Array<ActorWithStatus> actorStates, ActorWithStatus actorStatus) {
-        if (!inGame.contains(actorStatus.getActor(), false) && actorStatus.getStatus().equals(com.group.gra.entities.ActorStatus.NotTouched)) {
+        if (!inGame.contains(actorStatus.getActor(), false) && actorStatus.getStatus().equals(ActorStatus.NotTouched)) {
             actorStates.removeValue(actorStatus, false);
             actorStates.add(new ActorWithStatus(actorStatus.getActor(), ActorStatus.Expired));
         }

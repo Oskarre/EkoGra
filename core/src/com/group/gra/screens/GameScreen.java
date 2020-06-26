@@ -17,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.group.gra.entities.ActorStatus;
+import com.group.gra.entities.ActorWithStatus;
 import com.group.gra.mappers.ResultMapper;
 import com.group.gra.validaton.DragAndDropNew;
 import com.group.gra.trashes.*;
@@ -24,6 +26,7 @@ import com.group.gra.uifactory.UIFactory;
 import com.group.gra.validaton.LivesValidator;
 
 import static com.group.gra.EkoGra.SETTINGS_FILE;
+import static com.group.gra.EkoGra.SOUND_ON;
 import static com.group.gra.validaton.DragAndDropNew.*;
 
 public class GameScreen implements Screen {
@@ -40,11 +43,9 @@ public class GameScreen implements Screen {
     private Image mixedContainer;
     private Sprite maciag;
     private Music backgroundMusic;
-    private Integer correctMatchesCounter = 0;
     private Label CorrectMatchesLabel;
-    private Integer liveCounter = 3;
     private Label livesLabel;
-    Array<com.group.gra.entities.ActorWithStatus> actorsWithStatus;
+    Array<ActorWithStatus> actorsWithStatus;
     private PauseWidget pauseWidget;
 
     public GameScreen(SpriteBatch sb) {
@@ -60,15 +61,14 @@ public class GameScreen implements Screen {
         createContainers(uiFactory);
         addLabels(uiFactory);
 
-
+        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+        initMusic();
         if(prefs.getBoolean(SOUND_ON)) {
             backgroundMusic.play();
         }
 
         pauseWidget = new PauseWidget(backgroundMusic,stage,sb);
         pauseWidget.createButtonPause(0, 0, 50, 50);
-
-        playMusic(false);
     }
 
     private void addMaciag() {
@@ -78,12 +78,12 @@ public class GameScreen implements Screen {
     }
 
     private void addLabels(UIFactory uiFactory) {
-        CorrectMatchesLabel = uiFactory.createCounterLabel(correctMatchesCounter);
-        livesLabel = uiFactory.createLivesLabel(liveCounter);
+        CorrectMatchesLabel = uiFactory.createLabel("Przyporządkowane: " + 0, 400, 250);
+        livesLabel = uiFactory.createLabel("Życia: " + 3, 400, 300);
         stage.addActor(CorrectMatchesLabel);
         stage.addActor(livesLabel);
-        actorsWithStatus.add(new com.group.gra.entities.ActorWithStatus(CorrectMatchesLabel, com.group.gra.entities.ActorStatus.StaticActor));
-        actorsWithStatus.add(new com.group.gra.entities.ActorWithStatus(livesLabel, com.group.gra.entities.ActorStatus.StaticActor));
+        actorsWithStatus.add(new ActorWithStatus(CorrectMatchesLabel, ActorStatus.StaticActor));
+        actorsWithStatus.add(new ActorWithStatus(livesLabel, ActorStatus.StaticActor));
     }
 
     private void createContainers(UIFactory uiFactory) {
@@ -103,21 +103,18 @@ public class GameScreen implements Screen {
         stage.addActor(hazardousContainer);
         stage.addActor(paperContainer);
         stage.addActor(mixedContainer);
-        actorsWithStatus.add(new com.group.gra.entities.ActorWithStatus(plasticContainer, com.group.gra.entities.ActorStatus.StaticActor));
-        actorsWithStatus.add(new com.group.gra.entities.ActorWithStatus(bioContainer, com.group.gra.entities.ActorStatus.StaticActor));
-        actorsWithStatus.add(new com.group.gra.entities.ActorWithStatus(glassContainer, com.group.gra.entities.ActorStatus.StaticActor));
-        actorsWithStatus.add(new com.group.gra.entities.ActorWithStatus(hazardousContainer, com.group.gra.entities.ActorStatus.StaticActor));
-        actorsWithStatus.add(new com.group.gra.entities.ActorWithStatus(paperContainer, com.group.gra.entities.ActorStatus.StaticActor));
-        actorsWithStatus.add(new com.group.gra.entities.ActorWithStatus(mixedContainer, com.group.gra.entities.ActorStatus.StaticActor));
+        actorsWithStatus.add(new ActorWithStatus(plasticContainer, ActorStatus.StaticActor));
+        actorsWithStatus.add(new ActorWithStatus(bioContainer, ActorStatus.StaticActor));
+        actorsWithStatus.add(new ActorWithStatus(glassContainer, ActorStatus.StaticActor));
+        actorsWithStatus.add(new ActorWithStatus(hazardousContainer, ActorStatus.StaticActor));
+        actorsWithStatus.add(new ActorWithStatus(paperContainer, ActorStatus.StaticActor));
+        actorsWithStatus.add(new ActorWithStatus(mixedContainer, ActorStatus.StaticActor));
     }
 
-    private void playMusic(boolean turnMusic) {
-        if (turnMusic) {
+    private void initMusic() {
             backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/gameScreenMusic.mp3"));
             backgroundMusic.setLooping(true);
             backgroundMusic.setVolume(0.1f);
-            backgroundMusic.play();
-        }
     }
 
     @Override
@@ -146,7 +143,7 @@ public class GameScreen implements Screen {
         DragAndDropNew dragAndDrop = new DragAndDropNew();
         initializeDragAndDrop(trash, dragAndDrop, sequence);
         DELAY_TIME += 2;
-        actorsWithStatus.add(new com.group.gra.entities.ActorWithStatus(image, com.group.gra.entities.ActorStatus.NotTouched));
+        actorsWithStatus.add(new ActorWithStatus(image, ActorStatus.NotTouched));
     }
 
     private void initializeDragAndDrop(Trash trash, DragAndDropNew dragAndDrop, SequenceAction sequence) {
@@ -183,15 +180,15 @@ public class GameScreen implements Screen {
     }
 
     private void changeMatchStatusToUndefine(Actor trash) {
-        removedActorByStatus(actorsWithStatus, trash, com.group.gra.entities.ActorStatus.NotTouched);
-        actorsWithStatus.add(new com.group.gra.entities.ActorWithStatus(trash, com.group.gra.entities.ActorStatus.Touched));
+        removedActorByStatusIfExist(actorsWithStatus, trash, ActorStatus.NotTouched);
+        actorsWithStatus.add(new ActorWithStatus(trash, ActorStatus.Touched));
     }
 
     private void changeMatchStatusToWrong(Actor trash) {
-        removedActorByStatus(actorsWithStatus, trash, com.group.gra.entities.ActorStatus.NotTouched);
-        removedActorByStatus(actorsWithStatus, trash, com.group.gra.entities.ActorStatus.Touched);
-        removedActorByStatus(actorsWithStatus, trash, com.group.gra.entities.ActorStatus.CorrectMatched);
-        actorsWithStatus.add(new com.group.gra.entities.ActorWithStatus(trash, com.group.gra.entities.ActorStatus.WrongMatched));
+        removedActorByStatusIfExist(actorsWithStatus, trash, ActorStatus.NotTouched);
+        removedActorByStatusIfExist(actorsWithStatus, trash, ActorStatus.Touched);
+        removedActorByStatusIfExist(actorsWithStatus, trash, ActorStatus.CorrectMatched);
+        actorsWithStatus.add(new ActorWithStatus(trash, ActorStatus.WrongMatched));
     }
 
     private void createDragAndDropTarget(final Image trash, DragAndDropNew dragAndDrop, Image container, final Object objectType) {
@@ -203,8 +200,6 @@ public class GameScreen implements Screen {
 
             @Override
             public void drop(Source source, Payload payload, float x, float y, int pointer) {
-                correctMatchesCounter += 1;
-                CorrectMatchesLabel.setText(correctMatchesCounter.toString());
                 changeMatchStatusToCorrect(trash);
                 trash.remove();
             }
@@ -212,14 +207,14 @@ public class GameScreen implements Screen {
     }
 
     private void changeMatchStatusToCorrect(Actor trash) {
-        removedActorByStatus(actorsWithStatus, trash, com.group.gra.entities.ActorStatus.NotTouched);
-        removedActorByStatus(actorsWithStatus, trash, com.group.gra.entities.ActorStatus.Touched);
-        actorsWithStatus.add(new com.group.gra.entities.ActorWithStatus(trash, com.group.gra.entities.ActorStatus.CorrectMatched));
+        removedActorByStatusIfExist(actorsWithStatus, trash, ActorStatus.NotTouched);
+        removedActorByStatusIfExist(actorsWithStatus, trash, ActorStatus.Touched);
+        actorsWithStatus.add(new ActorWithStatus(trash, ActorStatus.CorrectMatched));
     }
 
-    private void removedActorByStatus(Array<com.group.gra.entities.ActorWithStatus> actorStates, Actor actor, com.group.gra.entities.ActorStatus correctMatched) {
-        if (actorStates.contains(new com.group.gra.entities.ActorWithStatus(actor, correctMatched), false)) {
-            actorStates.removeValue(new com.group.gra.entities.ActorWithStatus(actor, correctMatched), false);
+    private void removedActorByStatusIfExist(Array<ActorWithStatus> actorStates, Actor actor, ActorStatus correctMatched) {
+        if (actorStates.contains(new ActorWithStatus(actor, correctMatched), false)) {
+            actorStates.removeValue(new ActorWithStatus(actor, correctMatched), false);
         }
     }
 
@@ -237,13 +232,22 @@ public class GameScreen implements Screen {
         }
         stage.draw();
         stage.act(delta);
-
-        endLevelWhenUserLivesEnded();
+        LivesValidator livesValidator = new LivesValidator(stage.getActors(), actorsWithStatus);
+        endLevelWhenUserLivesEnded(livesValidator);
         endLevelWhenTrashesEnded();
+
+        changeLabelStatus(livesValidator);
     }
 
-    private void endLevelWhenUserLivesEnded() {
-        com.group.gra.validaton.LivesValidator livesValidator = new LivesValidator(stage.getActors(), actorsWithStatus);
+    private void changeLabelStatus(LivesValidator livesValidator) {
+        Array<ActorWithStatus> uncorrectMatches = livesValidator.findUncorrectMatches(actorsWithStatus);
+        livesLabel.setText("Życia: " + (3 - uncorrectMatches.size));
+
+        Array<ActorWithStatus> correctMatches = livesValidator.findCorrectMatches(actorsWithStatus);
+        CorrectMatchesLabel.setText("Przyporządkowane: " + correctMatches.size);
+    }
+
+    private void endLevelWhenUserLivesEnded(LivesValidator livesValidator) {
         if (!livesValidator.hasUserLive()) {
             ResultMapper mapper = new ResultMapper();
             ((Game) Gdx.app.getApplicationListener()).setScreen(new SummaryScreen(sb, mapper.mapToResultList(actorsWithStatus)));
@@ -251,7 +255,7 @@ public class GameScreen implements Screen {
     }
 
     private void endLevelWhenTrashesEnded() {
-        if (stage.getActors().size == 8) {
+        if (stage.getActors().size == 9) {
             ResultMapper mapper = new ResultMapper();
             ((Game) Gdx.app.getApplicationListener()).setScreen(new SummaryScreen(sb, mapper.mapToResultList(actorsWithStatus)));
         }

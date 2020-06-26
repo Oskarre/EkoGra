@@ -24,9 +24,9 @@ public class SummaryScreen implements Screen {
     private Stage stage;
     private TextureAtlas atlas;
     private Skin skin;
-    private Array<com.group.gra.entities.Result> matches;
+    private Array<Result> matches;
 
-    public SummaryScreen(SpriteBatch sb, Array<com.group.gra.entities.Result> matches) {
+    public SummaryScreen(SpriteBatch sb, Array<Result> matches) {
         this.sb = sb;
         this.matches = matches;
     }
@@ -39,15 +39,15 @@ public class SummaryScreen implements Screen {
         createTableWithResults();
 
         UIFactory uiFactory = new UIFactory();
-        ImageButton returnButton = uiFactory.createReturnButton();
+        Button returnButton = uiFactory.createReturnButton();
         addReturnButtonListener(returnButton);
         stage.addActor(returnButton);
         spriteBackground = uiFactory.createSpriteBackground("menuBackground.png");
     }
 
     private void createTableWithResults() {
-        atlas = new TextureAtlas("ui/uiskin.atlas");
-        skin = new Skin(Gdx.files.internal("ui/uiskin.json"), atlas);
+        atlas = new TextureAtlas("ui/design.atlas");
+        skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
 
         Table table = new Table(skin);
         table.center();
@@ -70,7 +70,7 @@ public class SummaryScreen implements Screen {
         }
     }
 
-    private void addReturnButtonListener(ImageButton returnButton) {
+    private void addReturnButtonListener(Button returnButton) {
         returnButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -116,7 +116,6 @@ public class SummaryScreen implements Screen {
         atlas.dispose();
         skin.dispose();
         stage.dispose();
-        sb.dispose();
         sb.dispose();
     }
 }
