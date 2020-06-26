@@ -1,6 +1,8 @@
 package com.group.gra.screens;
 
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
@@ -23,10 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.group.gra.DragAndDropNew.*;
+import static com.group.gra.EkoGra.*;
 
 public class GameScreen implements Screen {
     private int DELAY_TIME = 2;
-
     private Stage stage;
     private SpriteBatch sb;
     private Sprite spriteBackground;
@@ -41,6 +43,8 @@ public class GameScreen implements Screen {
     private Map<String, String> correctMatches;
     private Integer counter;
     private Label label;
+    private Skin skin;
+    private PauseWidget pauseWidget;
 
     public GameScreen(SpriteBatch sb) {
         this.sb = sb;
@@ -60,7 +64,37 @@ public class GameScreen implements Screen {
         label = createCounterLabel();
         stage.addActor(label);
 
-        playMusic(true);
+        TextureAtlas atlas = new TextureAtlas("ui/design.atlas");
+        skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
+        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/gameScreenMusic.mp3"));
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(0.1f);
+
+        if(prefs.getBoolean(SOUND_ON)) {
+            backgroundMusic.play();
+        }
+
+        pauseWidget = new PauseWidget(backgroundMusic,stage,sb);
+        pauseWidget.createButtonPause(0, 0, 50, 50);
+
+        TrashGenerator generator = new TrashGenerator();
+        Array<Trash> trashArray = generator.generateTrashArray(10);
+
+        for (Trash trash : trashArray) {
+            correctMatches.put(trash.getName(), "Zle");
+            trash.getImage().setPosition(0, 100);
+            SequenceAction sequence = new SequenceAction(Actions.hide(), Actions.delay(DELAY_TIME), Actions.show(),
+                    Actions.moveTo(640, 100, 4f), Actions.removeActor());
+
+            addContainersAsActors();
+            DragAndDropNew dragAndDropInstance = new DragAndDropNew();
+            initializeDragAndDrop(trash, dragAndDropInstance, sequence);
+            stage.addActor(trash.getImage());
+            trash.getImage().addAction(sequence);
+            DELAY_TIME += 2;
+        }
     }
 
     private Label createCounterLabel() {
@@ -88,32 +122,13 @@ public class GameScreen implements Screen {
         return container;
     }
 
-    private void playMusic(boolean turnMusic) {
-        if (turnMusic) {
-            backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/gameScreenMusic.mp3"));
-            backgroundMusic.setLooping(true);
-            backgroundMusic.setVolume(0.1f);
-            backgroundMusic.play();
-        }
-    }
-
     @Override
     public void show() {
-        TrashGenerator generator = new TrashGenerator();
-        Array<Trash> trashArray = generator.generateTrashArray(10);
-        for (Trash trash : trashArray) {
-            System.out.println(trash.getName());
-            correctMatches.put(trash.getName(), "Zle");
-            DragAndDropNew dragAndDrop = new DragAndDropNew();
-            trash.getImage().setPosition(0, 100);
-            SequenceAction sequence = new SequenceAction(Actions.hide(), Actions.delay(DELAY_TIME), Actions.show(),
-                    Actions.moveTo(640, 100, 4f), Actions.removeActor());
 
-            addContainersAsActors();
-            initializeDragAndDrop(trash, dragAndDrop, sequence);
-            stage.addActor(trash.getImage());
-            trash.getImage().addAction(sequence);
-            DELAY_TIME += 2;
+        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+        if(prefs.getBoolean(SOUND_ON))
+        {
+            backgroundMusic.play();
         }
     }
 
@@ -177,24 +192,24 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         sb.begin();
         spriteBackground.draw(sb);
         maciag.draw(sb);
         sb.end();
-        stage.act(delta);
+        if(pauseWidget.isGamePaused()) {
+            delta = 0;
+        }
         stage.draw();
+            stage.act(delta);
     }
 
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height);
-        System.out.println(correctMatches);
     }
 
     @Override
     public void pause() {
-
     }
 
     @Override
@@ -204,7 +219,10 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
-        backgroundMusic.stop();
+        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+        if(prefs.getBoolean(SOUND_ON)) {
+            backgroundMusic.pause();
+        }
     }
 
     @Override
@@ -214,4 +232,5 @@ public class GameScreen implements Screen {
         sb.dispose();
         backgroundMusic.dispose();
     }
+
 }

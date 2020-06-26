@@ -1,0 +1,37 @@
+{
+	"com.badlogic.gdx.graphics.g2d.BitmapFont": {
+		"default-font": {
+			"file": "nunito-regular.fnt"
+		}
+	},
+"com.badlogic.gdx.graphics.Color": {
+	"green":	{ "a": 1, "b": 0, "g": 1, "r": 0 },
+	"white":	{ "a": 1, "b": 1, "g": 1, "r": 1 },
+	"red":		{ "a": 1, "b": 0, "g": 0, "r": 1 },
+	"black":	{ "a": 1, "b": 0, "g": 0, "r": 0 }
+},
+
+"com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle": {
+	"default": { "down": "button", "up": "button" },
+	"toggle": { "parent": "default", "checked": "button" },
+	"pause": { "down": "pause", "up": "pause" },
+	"sound_on": { "down": "sound_on", "up": "sound_on" },
+	"sound_off": { "down": "sound_off", "up": "sound_off" }
+},
+"com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
+	"default": { "parent": "default", "font": "default-font", "fontColor": "white" },
+	"toggle": { "parent": "default", "checked": "button", "downFontColor": "red" },
+	"disabled": {"parent": "default", "font": "default-font", "fontColor": "green"}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle": {
+	"default": { "down": "pause", "up": "pause" },
+	"toggle": { "parent": "default", "checked": "pause" },
+	"pause": { "down": "pause", "up": "pause" }
+},
+"com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {
+	"default": { "titleFont": "default-font", "background": "B70", "titleFontColor": "white"},
+},
+	"com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
+		"default": { "font": "default-font", "fontColor": "white" }
+	}
+}
