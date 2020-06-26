@@ -26,8 +26,6 @@ public class SettingsScreen implements Screen {
     private Stage stage;
     private TextureAtlas atlas;
     private Skin skin;
-    private TextureAtlas buttonAtlas;
-    private Skin buttonSkin;
     private SpriteBatch sb;
     public Sprite spriteBackground;
 
@@ -40,10 +38,8 @@ public class SettingsScreen implements Screen {
         FitViewport viewPort = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
-        atlas = new TextureAtlas("ui/uiskin.atlas");
-        skin = new Skin(Gdx.files.internal("ui/uiskin.json"), atlas);
-        buttonAtlas = new TextureAtlas("ui/design.atlas");
-        buttonSkin = new Skin(Gdx.files.internal("ui/design.json"), buttonAtlas);
+        atlas = new TextureAtlas("ui/design.atlas");
+        skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
         Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
 
         TextButton buttonComeBack = new TextButton("Powrót MainMenu", buttonSkin);
@@ -128,17 +124,16 @@ public class SettingsScreen implements Screen {
             }
         });
     }
-
     private TextButton createButtonGameMode(Preferences prefs) {
         if (prefs.getInteger(GAME_MODE) == 1) {
-            return new TextButton(PRZYGODOWY, buttonSkin);
+            return new TextButton(PRZYGODOWY, skin);
         } else {
-            return new TextButton(TRENINGOWY, buttonSkin);
+            return new TextButton(TRENINGOWY, skin);
         }
     }
 
     private TextButton createButtonSpeed(Preferences prefs) {
-        TextButton buttonSpeed = new TextButton(Integer.toString(prefs.getInteger(GAME_SPEED)), buttonSkin);
+        TextButton buttonSpeed = new TextButton(Integer.toString(prefs.getInteger(GAME_SPEED)), skin);
         if (prefs.getInteger(GAME_MODE) == 1) {
             buttonSpeed.setTouchable(Touchable.disabled);
         } else {

@@ -2,6 +2,7 @@ package com.group.gra.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
@@ -22,6 +23,7 @@ import com.group.gra.trashes.*;
 import com.group.gra.uifactory.UIFactory;
 import com.group.gra.validaton.LivesValidator;
 
+import static com.group.gra.EkoGra.SETTINGS_FILE;
 import static com.group.gra.validaton.DragAndDropNew.*;
 
 public class GameScreen implements Screen {
@@ -43,7 +45,7 @@ public class GameScreen implements Screen {
     private Integer liveCounter = 3;
     private Label livesLabel;
     Array<com.group.gra.entities.ActorWithStatus> actorsWithStatus;
-
+    private PauseWidget pauseWidget;
 
     public GameScreen(SpriteBatch sb) {
         this.sb = sb;
@@ -57,6 +59,14 @@ public class GameScreen implements Screen {
         addMaciag();
         createContainers(uiFactory);
         addLabels(uiFactory);
+
+
+        if(prefs.getBoolean(SOUND_ON)) {
+            backgroundMusic.play();
+        }
+
+        pauseWidget = new PauseWidget(backgroundMusic,stage,sb);
+        pauseWidget.createButtonPause(0, 0, 50, 50);
 
         playMusic(false);
     }
@@ -112,6 +122,12 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+        if(prefs.getBoolean(SOUND_ON))
+        {
+            backgroundMusic.play();
+        }
+
         TrashGenerator generator = new TrashGenerator();
         Array<Trash> trashArray = generator.generateTrashArray(10);
         for (Trash trash : trashArray) {
@@ -216,8 +232,11 @@ public class GameScreen implements Screen {
         spriteBackground.draw(sb);
         maciag.draw(sb);
         sb.end();
-        stage.act(delta);
+        if(pauseWidget.isGamePaused()) {
+            delta = 0;
+        }
         stage.draw();
+        stage.act(delta);
 
         endLevelWhenUserLivesEnded();
         endLevelWhenTrashesEnded();
@@ -241,6 +260,7 @@ public class GameScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height);
+
     }
 
     @Override
@@ -254,6 +274,10 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
+        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+        if(prefs.getBoolean(SOUND_ON)) {
+            backgroundMusic.pause();
+        }
     }
 
     @Override
