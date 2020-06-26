@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.group.gra.uifactory.UIFactory;
 
 import static com.group.gra.EkoGra.*;
 
@@ -25,6 +26,8 @@ public class SettingsScreen implements Screen {
     private Stage stage;
     private TextureAtlas atlas;
     private Skin skin;
+    private TextureAtlas buttonAtlas;
+    private Skin buttonSkin;
     private SpriteBatch sb;
     public Sprite spriteBackground;
 
@@ -39,9 +42,11 @@ public class SettingsScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         atlas = new TextureAtlas("ui/uiskin.atlas");
         skin = new Skin(Gdx.files.internal("ui/uiskin.json"), atlas);
+        buttonAtlas = new TextureAtlas("ui/design.atlas");
+        buttonSkin = new Skin(Gdx.files.internal("ui/design.json"), buttonAtlas);
         Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
 
-        TextButton buttonComeBack = new TextButton("Powrót MainMenu", skin);
+        TextButton buttonComeBack = new TextButton("Powrót MainMenu", buttonSkin);
         final TextButton buttonGameMode = createButtonGameMode(prefs);
         final TextButton buttonSpeed = createButtonSpeed(prefs);
 
@@ -53,7 +58,8 @@ public class SettingsScreen implements Screen {
         buttonSpeed.pad(20);
         buttonComeBack.pad(20);
 
-        createBackground();
+        UIFactory uiFactory = new UIFactory();
+        spriteBackground = uiFactory.createSpriteBackground("menuBackground.png");
         Label labelScreen = new Label("Ustawienia", skin);
         Label labelGameMode = new Label("Tryb gry:", skin);
         Label labelGameSpeed = new Label("Szybkość:", skin);
@@ -122,26 +128,23 @@ public class SettingsScreen implements Screen {
             }
         });
     }
+
     private TextButton createButtonGameMode(Preferences prefs) {
         if (prefs.getInteger(GAME_MODE) == 1) {
-            return new TextButton(PRZYGODOWY, skin);
+            return new TextButton(PRZYGODOWY, buttonSkin);
         } else {
-            return new TextButton(TRENINGOWY, skin);
+            return new TextButton(TRENINGOWY, buttonSkin);
         }
     }
+
     private TextButton createButtonSpeed(Preferences prefs) {
-        TextButton buttonSpeed = new TextButton(Integer.toString(prefs.getInteger(GAME_SPEED)), skin);
+        TextButton buttonSpeed = new TextButton(Integer.toString(prefs.getInteger(GAME_SPEED)), buttonSkin);
         if (prefs.getInteger(GAME_MODE) == 1) {
             buttonSpeed.setTouchable(Touchable.disabled);
         } else {
             buttonSpeed.setTouchable(Touchable.enabled);
         }
         return buttonSpeed;
-    }
-    private void createBackground() {
-        Texture backgroundTexture = new Texture("gameScreenBackground.png");
-        spriteBackground = new Sprite(backgroundTexture);
-        spriteBackground.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     @Override

@@ -24,6 +24,7 @@ public class MenuScreen implements Screen {
     private SpriteBatch sb;
     public Sprite spriteBackground;
     Music backgroundMusic;
+
     public MenuScreen(SpriteBatch sb) {
         this.sb = sb;
     }
@@ -33,8 +34,8 @@ public class MenuScreen implements Screen {
         FitViewport viewPort = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
-        atlas = new TextureAtlas("ui/uiskin.atlas");
-        skin = new Skin(Gdx.files.internal("ui/uiskin.json"), atlas);
+        atlas = new TextureAtlas("ui/design.atlas");
+        skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
 
         backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/menuScreenMusic.mp3"));
         backgroundMusic.setLooping(true);
@@ -43,21 +44,25 @@ public class MenuScreen implements Screen {
 
         TextButton buttonPlay = new TextButton("Play", skin);
         TextButton buttonSettings = new TextButton("Settings", skin);
+        TextButton instructionButton = new TextButton("How to play", skin);
         TextButton buttonQuit = new TextButton("Quit", skin);
 
         addButtonPlayListener(buttonPlay);
         addButtonSettingsListener(buttonSettings);
+        addButtonInstructionListener(instructionButton);
         addButtonQuitListener(buttonQuit);
 
         buttonPlay.pad(20);
         buttonSettings.pad(20);
         buttonQuit.pad(20);
+        instructionButton.pad(20);
 
         Table table = new Table(skin);
         table.setFillParent(true);
         table.defaults().pad(10).fillX();
         table.add(buttonPlay).row();
         table.add(buttonSettings).row();
+        table.add(instructionButton).row();
         table.add(buttonQuit).row();
 
         stage.addActor(table);
@@ -83,6 +88,15 @@ public class MenuScreen implements Screen {
         });
     }
 
+    private void addButtonInstructionListener(TextButton buttonInstruction) {
+        buttonInstruction.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new InstructionScreen(sb));
+            }
+        });
+    }
+
     private void addButtonPlayListener(TextButton buttonPlay) {
         buttonPlay.addListener(new ClickListener() {
             @Override
@@ -93,7 +107,7 @@ public class MenuScreen implements Screen {
     }
 
     private void createSpriteBackground() {
-        Texture backgroundTexture = new Texture("gameScreenBackground.png");
+        Texture backgroundTexture = new Texture("menuBackground.png");
         spriteBackground = new Sprite(backgroundTexture);
         spriteBackground.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }

@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.group.gra.tween.SpriteAccessor;
+import com.group.gra.uifactory.UIFactory;
 
 public class SplashScreen implements Screen {
     public Sprite spriteBackground;
@@ -25,16 +26,10 @@ public class SplashScreen implements Screen {
 
     @Override
     public void show() {
-        spriteBackground = createSpriteBackground("gameScreenBackground.png");
+        UIFactory uiFactory = new UIFactory();
+        spriteBackground = uiFactory.createSpriteBackground("menuBackground.png");
         spriteTitle = createSpriteTitle("title.png");
         initializeTweenManager();
-    }
-
-    private Sprite createSpriteBackground(String spriteImage) {
-        Texture texture = new Texture(spriteImage);
-        Sprite sprite = new Sprite(texture);
-        sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        return sprite;
     }
 
     private Sprite createSpriteTitle(String spriteImage) {

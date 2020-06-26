@@ -1,0 +1,68 @@
+design.png
+size: 396, 819
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+button
+  rotate: false
+  xy: 0, 0
+  size: 363, 86
+  orig: 363, 86
+  offset: 0, 0
+  index: -1
+credits
+  rotate: false
+  xy: 178, 421
+  size: 198, 199
+  orig: 198, 199
+  offset: 0, 0
+  index: -1
+info
+  rotate: false
+  xy: 0, 86
+  size: 168, 167
+  orig: 168, 167
+  offset: 0, 0
+  index: -1
+options
+  rotate: false
+  xy: 0, 253
+  size: 167, 168
+  orig: 167, 168
+  offset: 0, 0
+  index: -1
+pause
+  rotate: false
+  xy: 0, 421
+  size: 178, 178
+  orig: 178, 178
+  offset: 0, 0
+  index: -1
+play
+  rotate: false
+  xy: 167, 253
+  size: 168, 168
+  orig: 168, 168
+  offset: 0, 0
+  index: -1
+return
+  rotate: false
+  xy: 168, 86
+  size: 168, 167
+  orig: 168, 167
+  offset: 0, 0
+  index: -1
+sound_off
+  rotate: false
+  xy: 0, 620
+  size: 198, 199
+  orig: 198, 199
+  offset: 0, 0
+  index: -1
+sound_on
+  rotate: false
+  xy: 198, 620
+  size: 198, 199
+  orig: 198, 199
+  offset: 0, 0
+  index: -1
