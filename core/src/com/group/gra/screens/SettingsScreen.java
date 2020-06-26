@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -16,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.group.gra.uifactory.UIFactory;
 
 import static com.group.gra.EkoGra.*;
 
@@ -41,7 +41,7 @@ public class SettingsScreen implements Screen {
         skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
         Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
 
-        TextButton buttonComeBack = new TextButton("Powrót MainMenu", skin);
+        TextButton buttonComeBack = new TextButton("Powrót", skin);
         final TextButton buttonGameMode = createButtonGameMode(prefs);
         final TextButton buttonSpeed = createButtonSpeed(prefs);
 
@@ -53,7 +53,8 @@ public class SettingsScreen implements Screen {
         buttonSpeed.pad(20);
         buttonComeBack.pad(20);
 
-        createBackground();
+        UIFactory uiFactory = new UIFactory();
+        spriteBackground = uiFactory.createSpriteBackground("menuBackground.png");
         Label labelScreen = new Label("Ustawienia", skin);
         Label labelGameMode = new Label("Tryb gry:", skin);
         Label labelGameSpeed = new Label("Szybkość:", skin);
@@ -129,6 +130,7 @@ public class SettingsScreen implements Screen {
             return new TextButton(TRENINGOWY, skin);
         }
     }
+
     private TextButton createButtonSpeed(Preferences prefs) {
         TextButton buttonSpeed = new TextButton(Integer.toString(prefs.getInteger(GAME_SPEED)), skin);
         if (prefs.getInteger(GAME_MODE) == 1) {
@@ -137,11 +139,6 @@ public class SettingsScreen implements Screen {
             buttonSpeed.setTouchable(Touchable.enabled);
         }
         return buttonSpeed;
-    }
-    private void createBackground() {
-        Texture backgroundTexture = new Texture("gameScreenBackground.png");
-        spriteBackground = new Sprite(backgroundTexture);
-        spriteBackground.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     @Override

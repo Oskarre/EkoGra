@@ -1,16 +1,15 @@
 package com.group.gra.screens;
 
-
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -18,17 +17,21 @@ import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.group.gra.DragAndDropNew;
+import com.group.gra.entities.ActorStatus;
+import com.group.gra.entities.ActorWithStatus;
+import com.group.gra.mappers.ResultMapper;
+import com.group.gra.validaton.DragAndDropNew;
 import com.group.gra.trashes.*;
+import com.group.gra.uifactory.UIFactory;
+import com.group.gra.validaton.LivesValidator;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.group.gra.DragAndDropNew.*;
-import static com.group.gra.EkoGra.*;
+import static com.group.gra.EkoGra.SETTINGS_FILE;
+import static com.group.gra.EkoGra.SOUND_ON;
+import static com.group.gra.validaton.DragAndDropNew.*;
 
 public class GameScreen implements Screen {
     private int DELAY_TIME = 2;
+
     private Stage stage;
     private SpriteBatch sb;
     private Sprite spriteBackground;
@@ -40,10 +43,9 @@ public class GameScreen implements Screen {
     private Image mixedContainer;
     private Sprite maciag;
     private Music backgroundMusic;
-    private Map<String, String> correctMatches;
-    private Integer counter;
-    private Label label;
-    private Skin skin;
+    private Label CorrectMatchesLabel;
+    private Label livesLabel;
+    Array<ActorWithStatus> actorsWithStatus;
     private PauseWidget pauseWidget;
 
     public GameScreen(SpriteBatch sb) {
@@ -51,85 +53,47 @@ public class GameScreen implements Screen {
         FitViewport viewPort = new FitViewport(800, 480);
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
+        actorsWithStatus = new Array<>();
 
-        spriteBackground = new Sprite(new Texture("gameScreenBackground.png"));
-        spriteBackground.setSize(800, 480);
+        UIFactory uiFactory = new UIFactory();
+        spriteBackground = uiFactory.createSpriteBackground("gameScreenBackground.png");
+        addMaciag();
+        createContainers(uiFactory);
+        addLabels(uiFactory);
 
-        maciag = new Sprite(new Texture("maciag_1.png"));
-        maciag.setSize(1500, 200);
-        maciag.setPosition(-350, 0);
-        createContainers();
-        correctMatches = new HashMap<>();
-        counter = 0;
-        label = createCounterLabel();
-        stage.addActor(label);
-
-        TextureAtlas atlas = new TextureAtlas("ui/design.atlas");
-        skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
         Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
-
-        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/gameScreenMusic.mp3"));
-        backgroundMusic.setLooping(true);
-        backgroundMusic.setVolume(0.1f);
-
+        initMusic();
         if(prefs.getBoolean(SOUND_ON)) {
             backgroundMusic.play();
         }
 
         pauseWidget = new PauseWidget(backgroundMusic,stage,sb);
         pauseWidget.createButtonPause(0, 0, 50, 50);
-
-        TrashGenerator generator = new TrashGenerator();
-        Array<Trash> trashArray = generator.generateTrashArray(10);
-
-        for (Trash trash : trashArray) {
-            correctMatches.put(trash.getName(), "Zle");
-            trash.getImage().setPosition(0, 100);
-            SequenceAction sequence = new SequenceAction(Actions.hide(), Actions.delay(DELAY_TIME), Actions.show(),
-                    Actions.moveTo(640, 100, 4f), Actions.removeActor());
-
-            addContainersAsActors();
-            DragAndDropNew dragAndDropInstance = new DragAndDropNew();
-            initializeDragAndDrop(trash, dragAndDropInstance, sequence);
-            stage.addActor(trash.getImage());
-            trash.getImage().addAction(sequence);
-            DELAY_TIME += 2;
-        }
     }
 
-    private Label createCounterLabel() {
-        TextureAtlas atlas = new TextureAtlas("ui/uiskin.atlas");
-        Skin skin = new Skin(Gdx.files.internal("ui/uiskin.json"), atlas);
-        Label label = new Label(counter.toString(), skin);
-        label.setColor(Color.BLACK);
-        label.setBounds(600, 200, 100, 100);
-        return label;
+    private void addMaciag() {
+        maciag = new Sprite(new Texture("maciag_1.png"));
+        maciag.setSize(1500, 200);
+        maciag.setPosition(-350, 0);
     }
 
-    private void createContainers() {
-        plasticContainer = createContainer("plasticContainer.png", 100, 150);
-        paperContainer = createContainer("paperContainer.png", 200, 150);
-        glassContainer = createContainer("glassContainer.png", 300, 150);
-        hazardousContainer = createContainer("hazardousContainer.png", 400, 150);
-        bioContainer = createContainer("bioContainer.png", 500, 150);
-        mixedContainer = createContainer("container.png", 600, 150);
+    private void addLabels(UIFactory uiFactory) {
+        CorrectMatchesLabel = uiFactory.createLabel("Przyporządkowane: " + 0, 400, 250);
+        livesLabel = uiFactory.createLabel("Życia: " + 3, 400, 300);
+        stage.addActor(CorrectMatchesLabel);
+        stage.addActor(livesLabel);
+        actorsWithStatus.add(new ActorWithStatus(CorrectMatchesLabel, ActorStatus.StaticActor));
+        actorsWithStatus.add(new ActorWithStatus(livesLabel, ActorStatus.StaticActor));
     }
 
-    private Image createContainer(String fileName, int x, int y) {
-        Image container = new Image(new Texture(fileName));
-        container.setSize(100, 100);
-        container.setPosition(x, y);
-        return container;
-    }
-
-    @Override
-    public void show() {
-
-        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
-        if(prefs.getBoolean(SOUND_ON))
-        {
-            backgroundMusic.play();
-        }
+    private void createContainers(UIFactory uiFactory) {
+        plasticContainer = uiFactory.createContainer("plasticContainer.png", 100, 150);
+        paperContainer = uiFactory.createContainer("paperContainer.png", 200, 150);
+        glassContainer = uiFactory.createContainer("glassContainer.png", 300, 150);
+        hazardousContainer = uiFactory.createContainer("hazardousContainer.png", 400, 150);
+        bioContainer = uiFactory.createContainer("bioContainer.png", 500, 150);
+        mixedContainer = uiFactory.createContainer("container.png", 600, 150);
+        addContainersAsActors();
     }
 
     private void addContainersAsActors() {
@@ -139,6 +103,47 @@ public class GameScreen implements Screen {
         stage.addActor(hazardousContainer);
         stage.addActor(paperContainer);
         stage.addActor(mixedContainer);
+        actorsWithStatus.add(new ActorWithStatus(plasticContainer, ActorStatus.StaticActor));
+        actorsWithStatus.add(new ActorWithStatus(bioContainer, ActorStatus.StaticActor));
+        actorsWithStatus.add(new ActorWithStatus(glassContainer, ActorStatus.StaticActor));
+        actorsWithStatus.add(new ActorWithStatus(hazardousContainer, ActorStatus.StaticActor));
+        actorsWithStatus.add(new ActorWithStatus(paperContainer, ActorStatus.StaticActor));
+        actorsWithStatus.add(new ActorWithStatus(mixedContainer, ActorStatus.StaticActor));
+    }
+
+    private void initMusic() {
+            backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/gameScreenMusic.mp3"));
+            backgroundMusic.setLooping(true);
+            backgroundMusic.setVolume(0.1f);
+    }
+
+    @Override
+    public void show() {
+        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+        if(prefs.getBoolean(SOUND_ON))
+        {
+            backgroundMusic.play();
+        }
+
+        TrashGenerator generator = new TrashGenerator();
+        Array<Trash> trashArray = generator.generateTrashArray(10);
+        for (Trash trash : trashArray) {
+            prepareTrashToGame(trash);
+        }
+    }
+
+    private void prepareTrashToGame(Trash trash) {
+        Image image = trash.getImage();
+        image.setName(trash.getName());
+        image.setPosition(0, 100);
+        SequenceAction sequence = new SequenceAction(Actions.hide(), Actions.delay(DELAY_TIME), Actions.show(),
+                Actions.moveTo(640, 100, 4f), Actions.removeActor());
+        stage.addActor(image);
+        image.addAction(sequence);
+        DragAndDropNew dragAndDrop = new DragAndDropNew();
+        initializeDragAndDrop(trash, dragAndDrop, sequence);
+        DELAY_TIME += 2;
+        actorsWithStatus.add(new ActorWithStatus(image, ActorStatus.NotTouched));
     }
 
     private void initializeDragAndDrop(Trash trash, DragAndDropNew dragAndDrop, SequenceAction sequence) {
@@ -159,17 +164,31 @@ public class GameScreen implements Screen {
                 payload.setObject(trash);
                 payload.setDragActor(getActor());
                 dragAndDrop.setDragActorPosition(getActor().getWidth() / 2, -(getActor().getHeight() / 2));
+                changeMatchStatusToUndefine(getActor());
                 getActor().removeAction(sequence);
                 return payload;
             }
 
             @Override
             public void dragStop(InputEvent event, float x, float y, int pointer, Payload payload, Target target) {
-                if (target == null)
+                if (target == null) {
+                    changeMatchStatusToWrong(getActor());
                     getActor().remove();
-                //TODO trashes on ground
+                }
             }
         });
+    }
+
+    private void changeMatchStatusToUndefine(Actor trash) {
+        removedActorByStatusIfExist(actorsWithStatus, trash, ActorStatus.NotTouched);
+        actorsWithStatus.add(new ActorWithStatus(trash, ActorStatus.Touched));
+    }
+
+    private void changeMatchStatusToWrong(Actor trash) {
+        removedActorByStatusIfExist(actorsWithStatus, trash, ActorStatus.NotTouched);
+        removedActorByStatusIfExist(actorsWithStatus, trash, ActorStatus.Touched);
+        removedActorByStatusIfExist(actorsWithStatus, trash, ActorStatus.CorrectMatched);
+        actorsWithStatus.add(new ActorWithStatus(trash, ActorStatus.WrongMatched));
     }
 
     private void createDragAndDropTarget(final Image trash, DragAndDropNew dragAndDrop, Image container, final Object objectType) {
@@ -181,17 +200,29 @@ public class GameScreen implements Screen {
 
             @Override
             public void drop(Source source, Payload payload, float x, float y, int pointer) {
-                counter += 1;
-                label.setText(counter.toString());
+                changeMatchStatusToCorrect(trash);
                 trash.remove();
             }
         });
+    }
+
+    private void changeMatchStatusToCorrect(Actor trash) {
+        removedActorByStatusIfExist(actorsWithStatus, trash, ActorStatus.NotTouched);
+        removedActorByStatusIfExist(actorsWithStatus, trash, ActorStatus.Touched);
+        actorsWithStatus.add(new ActorWithStatus(trash, ActorStatus.CorrectMatched));
+    }
+
+    private void removedActorByStatusIfExist(Array<ActorWithStatus> actorStates, Actor actor, ActorStatus correctMatched) {
+        if (actorStates.contains(new ActorWithStatus(actor, correctMatched), false)) {
+            actorStates.removeValue(new ActorWithStatus(actor, correctMatched), false);
+        }
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         sb.begin();
         spriteBackground.draw(sb);
         maciag.draw(sb);
@@ -200,12 +231,40 @@ public class GameScreen implements Screen {
             delta = 0;
         }
         stage.draw();
-            stage.act(delta);
+        stage.act(delta);
+        LivesValidator livesValidator = new LivesValidator(stage.getActors(), actorsWithStatus);
+        endLevelWhenUserLivesEnded(livesValidator);
+        endLevelWhenTrashesEnded();
+
+        changeLabelStatus(livesValidator);
+    }
+
+    private void changeLabelStatus(LivesValidator livesValidator) {
+        Array<ActorWithStatus> uncorrectMatches = livesValidator.findUncorrectMatches(actorsWithStatus);
+        livesLabel.setText("Życia: " + (3 - uncorrectMatches.size));
+
+        Array<ActorWithStatus> correctMatches = livesValidator.findCorrectMatches(actorsWithStatus);
+        CorrectMatchesLabel.setText("Przyporządkowane: " + correctMatches.size);
+    }
+
+    private void endLevelWhenUserLivesEnded(LivesValidator livesValidator) {
+        if (!livesValidator.hasUserLive()) {
+            ResultMapper mapper = new ResultMapper();
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new SummaryScreen(sb, mapper.mapToResultList(actorsWithStatus)));
+        }
+    }
+
+    private void endLevelWhenTrashesEnded() {
+        if (stage.getActors().size == 9) {
+            ResultMapper mapper = new ResultMapper();
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new SummaryScreen(sb, mapper.mapToResultList(actorsWithStatus)));
+        }
     }
 
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height);
+
     }
 
     @Override
@@ -232,5 +291,4 @@ public class GameScreen implements Screen {
         sb.dispose();
         backgroundMusic.dispose();
     }
-
 }
