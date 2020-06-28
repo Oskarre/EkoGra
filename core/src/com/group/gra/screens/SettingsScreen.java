@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -28,6 +29,8 @@ public class SettingsScreen implements Screen {
     private Skin skin;
     private SpriteBatch sb;
     public Sprite spriteBackground;
+    private Sound buttonClickedSound;
+    private Preferences prefs;
 
     public SettingsScreen(SpriteBatch sb) {
         this.sb = sb;
@@ -40,11 +43,11 @@ public class SettingsScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         atlas = new TextureAtlas("ui/design.atlas");
         skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
-        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+        prefs = Gdx.app.getPreferences(SETTINGS_FILE);
 
         TextButton buttonComeBack = new TextButton("Quit", skin);
-        final TextButton buttonGameMode = createButtonGameMode(prefs);
-        final TextButton buttonSpeed = createButtonSpeed(prefs);
+        final TextButton buttonGameMode = createButtonGameMode();
+        final TextButton buttonSpeed = createButtonSpeed();
 
         addButtonGameModeListener(buttonGameMode, buttonSpeed);
         addButtonSpeedListener(buttonSpeed);
@@ -81,12 +84,18 @@ public class SettingsScreen implements Screen {
         table.add().row();
         table.center();
         stage.addActor(table);
+
+        buttonClickedSound = Gdx.audio.newSound(Gdx.files.internal("sound/buttonClicked.mp3"));
+        buttonClickedSound.setVolume(1,0.1f);
     }
 
     private void addButtonComeBackListener(TextButton buttonComeBack) {
         buttonComeBack.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if(prefs.getBoolean(SOUND_ON)) {
+                    buttonClickedSound.play();
+                }
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new MenuScreen(sb));
             }
         });
@@ -96,7 +105,9 @@ public class SettingsScreen implements Screen {
         buttonSpeed.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+                if(prefs.getBoolean(SOUND_ON)) {
+                    buttonClickedSound.play();
+                }
                 if (prefs.getInteger(GAME_SPEED) == 3) {
                     prefs.putInteger(GAME_SPEED, 1).flush();
                 } else {
@@ -112,7 +123,9 @@ public class SettingsScreen implements Screen {
         buttonGameMode.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+                if(prefs.getBoolean(SOUND_ON)) {
+                    buttonClickedSound.play();
+                }
                 int mode = prefs.getInteger(GAME_MODE);
                 if (mode == 1) {
                     buttonGameMode.setText(TRAINING_MODE_LABEL);
@@ -126,7 +139,7 @@ public class SettingsScreen implements Screen {
             }
         });
     }
-    private TextButton createButtonGameMode(Preferences prefs) {
+    private TextButton createButtonGameMode() {
         if (prefs.getInteger(GAME_MODE) == 1) {
             return new TextButton(LEVEL_MODE_LABEL, skin);
         } else {
@@ -134,7 +147,7 @@ public class SettingsScreen implements Screen {
         }
     }
 
-    private TextButton createButtonSpeed(Preferences prefs) {
+    private TextButton createButtonSpeed() {
         TextButton buttonSpeed = new TextButton(Integer.toString(prefs.getInteger(GAME_SPEED)), skin);
         if (prefs.getInteger(GAME_MODE) == 1) {
             buttonSpeed.setTouchable(Touchable.disabled);

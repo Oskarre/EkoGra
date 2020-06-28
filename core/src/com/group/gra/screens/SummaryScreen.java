@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -30,6 +31,8 @@ public class SummaryScreen implements Screen {
     private Skin skin;
     private Array<Result> matches;
     private boolean isWin;
+    private Sound buttonClickedSound;
+    private Preferences prefs;
 
     public SummaryScreen(SpriteBatch sb, Array<Result> matches, boolean isWin) {
         this.sb = sb;
@@ -46,14 +49,13 @@ public class SummaryScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         createTableWithResults();
-
+        prefs = Gdx.app.getPreferences(SETTINGS_FILE);
         UIFactory uiFactory = new UIFactory();
         Button returnButton = uiFactory.createReturnButton();
         addReturnButtonListener(returnButton);
         stage.addActor(returnButton);
         spriteBackground = uiFactory.createSpriteBackground("menuBackground.png");
 
-        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
         int actualLevel = prefs.getInteger(LEVEL);
 
         if(isWin && actualLevel <=3){
@@ -62,6 +64,9 @@ public class SummaryScreen implements Screen {
             addPlayButtonListener(playButton);
             stage.addActor(playButton);
         }
+
+        buttonClickedSound = Gdx.audio.newSound(Gdx.files.internal("sound/buttonClicked.mp3"));
+        buttonClickedSound.setVolume(1,0.1f);
     }
 
     private void createTableWithResults() {
@@ -83,7 +88,6 @@ public class SummaryScreen implements Screen {
     }
 
     private void fillTableByUserResult(Table table) {
-        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
         int gameMode = prefs.getInteger(GAME_MODE);
         if(isWin && gameMode == LEVEL_MODE){
             Label label = new Label("Congratulation! You pass the Level " + prefs.getInteger(LEVEL) +"!", skin);
@@ -110,6 +114,9 @@ public class SummaryScreen implements Screen {
         returnButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if(prefs.getBoolean(SOUND_ON)) {
+                    buttonClickedSound.play();
+                }
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new MenuScreen(sb));
             }
         });
@@ -119,6 +126,9 @@ public class SummaryScreen implements Screen {
         returnButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if(prefs.getBoolean(SOUND_ON)) {
+                    buttonClickedSound.play();
+                }
                 GameManager gameManager = new GameManager();
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(sb, gameManager.getGameConfiguration()));
             }

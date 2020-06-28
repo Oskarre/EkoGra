@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -28,6 +29,8 @@ public class PauseWidget {
     private Stage stage;
     private final TextButton buttonResume;
     private boolean pause;
+    private Sound buttonClickedSound;
+    private Preferences prefs;
 
     PauseWidget(Music music, Stage gameScreenStage, SpriteBatch gameScreenSb) {
         backgroundMusic = music;
@@ -44,9 +47,9 @@ public class PauseWidget {
         buttonQuit = new TextButton("Quit",skin);
         addButtonQuit(buttonQuit);
 
-        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+        prefs = Gdx.app.getPreferences(SETTINGS_FILE);
 
-        buttonSound = createButtonSound(prefs);
+        buttonSound = createButtonSound();
         addButtonSoundListener(buttonSound);
 
         pauseWidget = new Window("", skin);
@@ -59,6 +62,9 @@ public class PauseWidget {
         table.add(buttonResume).row();
         table.add(buttonQuit).row();
         table.add(buttonSound).row();
+
+        buttonClickedSound = Gdx.audio.newSound(Gdx.files.internal("sound/buttonClicked.mp3"));
+        buttonClickedSound.setVolume(1,0.1f);
     }
 
 
@@ -67,6 +73,9 @@ public class PauseWidget {
         buttonResume.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if(prefs.getBoolean(SOUND_ON)) {
+                    buttonClickedSound.play();
+                }
                 pause=false;
                 pauseWidget.addAction(Actions.removeActor());
             }
@@ -77,6 +86,9 @@ public class PauseWidget {
         buttonQuit.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if(prefs.getBoolean(SOUND_ON)) {
+                    buttonClickedSound.play();
+                }
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new MenuScreen(sb));
             }
         });
@@ -86,7 +98,9 @@ public class PauseWidget {
         buttonSound.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+                if(prefs.getBoolean(SOUND_ON)) {
+                    buttonClickedSound.play();
+                }
                 if (prefs.getBoolean(SOUND_ON,true)) {
                     prefs.putBoolean(SOUND_ON, false).flush();
                     buttonSound.setStyle(skin.get("sound_off",Button.ButtonStyle.class));
@@ -100,7 +114,7 @@ public class PauseWidget {
             }
         });
     }
-    private Button createButtonSound(Preferences prefs) {
+    private Button createButtonSound() {
         if (prefs.getBoolean(SOUND_ON,true)) {
             return new Button(skin.get("sound_on",Button.ButtonStyle.class));
         } else {
@@ -118,6 +132,9 @@ public class PauseWidget {
         buttonPause.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if(prefs.getBoolean(SOUND_ON)) {
+                    buttonClickedSound.play();
+                }
                 pause=true;
                 stage.addActor(pauseWidget);
             }
