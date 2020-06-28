@@ -55,17 +55,24 @@ public class GameScreen implements Screen {
     private Sound paperTrashSound;
     private GameParameters gameParameters;
 
+
+    private Animation animation;
+    private TextureAtlas textureAtlas;
+    private float elapsedTime = 0f;
+
+
     public GameScreen(SpriteBatch sb, GameParameters gameParameters) {
         this.sb = sb;
+        this.gameParameters = gameParameters;
+        textureAtlas = new TextureAtlas(Gdx.files.internal("animation/conveyor_animation.atlas"));
+        animation = new Animation(gameParameters.getConveyorSpeed(), textureAtlas.getRegions(), Animation.PlayMode.LOOP);
         FitViewport viewPort = new FitViewport(800, 480);
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
         actorsWithStatus = new Array<>();
         prefs = Gdx.app.getPreferences(SETTINGS_FILE);
-
         UIFactory uiFactory = new UIFactory();
-        spriteBackground = uiFactory.createSpriteBackground("gameScreenBackground.png");
-        addConveyor();
+        spriteBackground = uiFactory.createSpriteBackground("gameScreenBackground.png", 800, 480);
         createContainers(uiFactory);
         addLabels(uiFactory);
 
@@ -76,17 +83,10 @@ public class GameScreen implements Screen {
 
         pauseWidget = new PauseWidget(backgroundMusic,stage,sb);
         pauseWidget.createButtonPause(0, 0, 50, 50);
-        this.gameParameters = gameParameters;
         DELAY_TIME = gameParameters.getTrashDelay();
         initSounds();
     }
 
-
-    private void addConveyor() {
-        conveyor = new Sprite(new Texture("conveyor.png"));
-        conveyor.setSize(1500, 200);
-        conveyor.setPosition(-350, 0);
-    }
 
     private void addLabels(UIFactory uiFactory) {
         CorrectMatchesLabel = uiFactory.createLabel("Matches: " + 0, 400, 250);
@@ -173,7 +173,7 @@ public class GameScreen implements Screen {
         image.setName(trash.getName());
         image.setPosition(0, 100);
         SequenceAction sequence = new SequenceAction(Actions.hide(), Actions.delay(DELAY_TIME), Actions.show(),
-                Actions.moveTo(640, 100, gameParameters.getTrashSpeed()), Actions.removeActor());
+                Actions.moveTo(640, 100, gameParameters.getTrashDuration()), Actions.removeActor());
         stage.addActor(image);
         image.addAction(sequence);
         DragAndDropNew dragAndDrop = new DragAndDropNew();
@@ -276,15 +276,18 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        elapsedTime += Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        sb.begin();
-        spriteBackground.draw(sb);
-        conveyor.draw(sb);
-        sb.end();
+        TextureRegion myanim = (TextureRegion)animation.getKeyFrame(elapsedTime);
         if(pauseWidget.isGamePaused()) {
             delta = 0;
+            elapsedTime = 0;
         }
+        sb.begin();
+        spriteBackground.draw(sb);
+        sb.draw(myanim,-350,0, myanim.getRegionWidth()*0.5f,myanim.getRegionHeight()*0.35f);
+        sb.end();
         stage.draw();
         stage.act(delta);
         LivesValidator livesValidator = new LivesValidator(stage.getActors(), actorsWithStatus);

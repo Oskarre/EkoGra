@@ -1,18 +1,20 @@
 package com.group.gra.entities;
 
 public class GameParameters {
-    float trashSpeed;
+    float trashDuration;
     float trashDelay;
     int numberOfTrashes;
+    float conveyorSpeed;
 
-    public GameParameters(float trashSpeed, float trashDelay, int numberOfTrashes) {
-        this.trashSpeed = trashSpeed;
+    public GameParameters(float trashDuration, float trashDelay, int numberOfTrashes, float conveyorSpeed) {
+        this.trashDuration = trashDuration;
         this.trashDelay = trashDelay;
         this.numberOfTrashes = numberOfTrashes;
+        this.conveyorSpeed = conveyorSpeed;
     }
 
-    public float getTrashSpeed() {
-        return trashSpeed;
+    public float getTrashDuration() {
+        return trashDuration;
     }
 
     public float getTrashDelay() {
@@ -21,5 +23,9 @@ public class GameParameters {
 
     public int getNumberOfTrashes() {
         return numberOfTrashes;
+    }
+
+    public float getConveyorSpeed() {
+        return conveyorSpeed;
     }
 }

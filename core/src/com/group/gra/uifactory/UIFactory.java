@@ -49,4 +49,11 @@ public class UIFactory {
         spriteBackground.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         return spriteBackground;
     }
+
+    public Sprite createSpriteBackground(String fileName, int x, int y) {
+        Texture backgroundTexture = new Texture(fileName);
+        Sprite spriteBackground = new Sprite(backgroundTexture);
+        spriteBackground.setSize(x, y);
+        return spriteBackground;
+    }
 }
