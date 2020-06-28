@@ -1,10 +1,8 @@
 package com.group.gra.screens;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -27,7 +25,9 @@ public class MenuScreen implements Screen {
     private Skin skin;
     private SpriteBatch sb;
     public Sprite spriteBackground;
-    Music backgroundMusic;
+    private Music backgroundMusic;
+    private Sound buttonClickedSound;
+    private Preferences prefs;
 
     public MenuScreen(SpriteBatch sb) {
         this.sb = sb;
@@ -40,11 +40,15 @@ public class MenuScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         atlas = new TextureAtlas("ui/design.atlas");
         skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
-        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+        prefs = Gdx.app.getPreferences(SETTINGS_FILE);
 
             backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/menuScreenMusic.mp3"));
             backgroundMusic.setLooping(true);
             backgroundMusic.setVolume(0.1f);
+
+        buttonClickedSound = Gdx.audio.newSound(Gdx.files.internal("sound/buttonClicked.mp3"));
+        buttonClickedSound.setVolume(1,0.1f);
+
         if(prefs.getBoolean(SOUND_ON)) {
             backgroundMusic.play();
         }
@@ -81,15 +85,22 @@ public class MenuScreen implements Screen {
         buttonQuit.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if(prefs.getBoolean(SOUND_ON)) {
+                    buttonClickedSound.play();
+                }
                 Gdx.app.exit();
             }
         });
+
     }
 
     private void addButtonSettingsListener(TextButton buttonSettings) {
         buttonSettings.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if(prefs.getBoolean(SOUND_ON)) {
+                    buttonClickedSound.play();
+                }
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new SettingsScreen(sb));
             }
         });
@@ -99,6 +110,9 @@ public class MenuScreen implements Screen {
         buttonInstruction.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if(prefs.getBoolean(SOUND_ON)) {
+                    buttonClickedSound.play();
+                }
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new InstructionScreen(sb));
             }
         });
@@ -108,6 +122,9 @@ public class MenuScreen implements Screen {
         buttonPlay.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if(prefs.getBoolean(SOUND_ON)) {
+                    buttonClickedSound.play();
+                }
                 GameManager  manager = new GameManager();
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(sb, manager.getGameConfiguration()));
             }
@@ -149,7 +166,6 @@ public class MenuScreen implements Screen {
 
     @Override
     public void hide() {
-        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
         if(prefs.getBoolean(SOUND_ON)) {
             backgroundMusic.pause();
         }

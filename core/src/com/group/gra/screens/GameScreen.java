@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -47,8 +48,12 @@ public class GameScreen implements Screen {
     private Label informationLabel;
     Array<ActorWithStatus> actorsWithStatus;
     private PauseWidget pauseWidget;
-
-    GameParameters gameParameters;
+    private Preferences prefs;
+    private Sound plasticTrashSound;
+    private Sound bioAndMixTrashSound;
+    private Sound glassAndHazardousTrashSound;
+    private Sound paperTrashSound;
+    private GameParameters gameParameters;
 
     public GameScreen(SpriteBatch sb, GameParameters gameParameters) {
         this.sb = sb;
@@ -56,6 +61,7 @@ public class GameScreen implements Screen {
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
         actorsWithStatus = new Array<>();
+        prefs = Gdx.app.getPreferences(SETTINGS_FILE);
 
         UIFactory uiFactory = new UIFactory();
         spriteBackground = uiFactory.createSpriteBackground("gameScreenBackground.png");
@@ -63,7 +69,6 @@ public class GameScreen implements Screen {
         createContainers(uiFactory);
         addLabels(uiFactory);
 
-        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
         initMusic();
         if(prefs.getBoolean(SOUND_ON)) {
             backgroundMusic.play();
@@ -73,7 +78,9 @@ public class GameScreen implements Screen {
         pauseWidget.createButtonPause(0, 0, 50, 50);
         this.gameParameters = gameParameters;
         DELAY_TIME = gameParameters.getTrashDelay();
+        initSounds();
     }
+
 
     private void addConveyor() {
         conveyor = new Sprite(new Texture("conveyor.png"));
@@ -94,7 +101,6 @@ public class GameScreen implements Screen {
     }
 
     private String getInformationLabelText() {
-        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
         int gameMode = prefs.getInteger(GAME_MODE);
         if(gameMode == LEVEL_MODE){
             prefs.getInteger(GAME_MODE);
@@ -137,9 +143,19 @@ public class GameScreen implements Screen {
             backgroundMusic.setVolume(0.1f);
     }
 
+    private void initSounds() {
+        plasticTrashSound = Gdx.audio.newSound(Gdx.files.internal("sound/plastic.mp3"));
+        plasticTrashSound.setVolume(1,0.1f);
+        bioAndMixTrashSound = Gdx.audio.newSound(Gdx.files.internal("sound/bioMixed.mp3"));
+        bioAndMixTrashSound.setVolume(1,0.1f);
+        glassAndHazardousTrashSound = Gdx.audio.newSound(Gdx.files.internal("sound/glassHazardous.mp3"));
+        glassAndHazardousTrashSound.setVolume(1,0.1f);
+        paperTrashSound = Gdx.audio.newSound(Gdx.files.internal("sound/paper.mp3"));
+        paperTrashSound.setVolume(1,0.1f);
+    }
+
     @Override
     public void show() {
-        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
         if(prefs.getBoolean(SOUND_ON))
         {
             backgroundMusic.play();
@@ -221,9 +237,28 @@ public class GameScreen implements Screen {
             @Override
             public void drop(Source source, Payload payload, float x, float y, int pointer) {
                 changeMatchStatusToCorrect(trash);
+                if(prefs.getBoolean(SOUND_ON)){
+                    playTrashSound(objectType);
+                }
                 trash.remove();
             }
         });
+    }
+
+    private void playTrashSound(Object type) {
+
+        if(type.equals(Bio.class) || type.equals(MixedTrash.class)){
+            bioAndMixTrashSound. play();
+        }
+        if(type.equals(Glass.class) || type.equals(HazardousTrash.class)){
+            glassAndHazardousTrashSound. play();
+        }
+        if(type.equals(Plastic.class) ){
+            plasticTrashSound. play();
+        }
+        if(type.equals(Paper.class) ){
+            paperTrashSound. play();
+        }
     }
 
     private void changeMatchStatusToCorrect(Actor trash) {
@@ -298,7 +333,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
-        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
         if(prefs.getBoolean(SOUND_ON)) {
             backgroundMusic.pause();
         }
