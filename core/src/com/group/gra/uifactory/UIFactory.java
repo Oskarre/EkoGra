@@ -35,6 +35,14 @@ public class UIFactory {
         return returnButton;
     }
 
+    public Button createPlayButton() {
+        TextureAtlas atlas = new TextureAtlas("ui/design.atlas");
+        Skin skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
+        Button returnButton =  new Button(skin.get("play",Button.ButtonStyle.class));
+        returnButton.setBounds(750, 60, 50, 50);
+        return returnButton;
+    }
+
     public Sprite createSpriteBackground(String fileName) {
         Texture backgroundTexture = new Texture(fileName);
         Sprite spriteBackground = new Sprite(backgroundTexture);

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,8 +21,8 @@ import com.group.gra.uifactory.UIFactory;
 import static com.group.gra.EkoGra.*;
 
 public class SettingsScreen implements Screen {
-    public static final String PRZYGODOWY = "Przygodowy";
-    public static final String TRENINGOWY = "Treningowy";
+    public static final String LEVEL_MODE_LABEL = "Level mode";
+    public static final String TRAINING_MODE_LABEL = "Training mode";
     private Stage stage;
     private TextureAtlas atlas;
     private Skin skin;
@@ -41,7 +42,7 @@ public class SettingsScreen implements Screen {
         skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
         Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
 
-        TextButton buttonComeBack = new TextButton("Powrót", skin);
+        TextButton buttonComeBack = new TextButton("Quit", skin);
         final TextButton buttonGameMode = createButtonGameMode(prefs);
         final TextButton buttonSpeed = createButtonSpeed(prefs);
 
@@ -55,15 +56,17 @@ public class SettingsScreen implements Screen {
 
         UIFactory uiFactory = new UIFactory();
         spriteBackground = uiFactory.createSpriteBackground("menuBackground.png");
-        Label labelScreen = new Label("Ustawienia", skin);
-        Label labelGameMode = new Label("Tryb gry:", skin);
-        Label labelGameSpeed = new Label("Szybkość:", skin);
+        Label labelScreen = new Label("Settings", skin);
+        labelScreen.setColor(Color.BLACK);
+        Label labelGameMode = new Label("Game mode:", skin);
+        labelGameMode.setColor(Color.BLACK);
+        Label labelGameSpeed = new Label("Game speed:", skin);
+        labelGameSpeed.setColor(Color.BLACK);
         labelScreen.setAlignment(Align.center);
         labelGameMode.setAlignment(Align.right);
         labelGameSpeed.setAlignment(Align.right);
 
         Table table = new Table(skin);
-
         table.setFillParent(true);
         table.defaults().pad(10).fillX().uniform();
         table.add(labelScreen).expandX().colspan(3).row();
@@ -94,7 +97,7 @@ public class SettingsScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
-                if (prefs.getInteger(GAME_SPEED) == 10) {
+                if (prefs.getInteger(GAME_SPEED) == 3) {
                     prefs.putInteger(GAME_SPEED, 1).flush();
                 } else {
                     prefs.putInteger(GAME_SPEED, prefs.getInteger(GAME_SPEED) + 1).flush();
@@ -112,11 +115,11 @@ public class SettingsScreen implements Screen {
                 Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
                 int mode = prefs.getInteger(GAME_MODE);
                 if (mode == 1) {
-                    buttonGameMode.setText(TRENINGOWY);
+                    buttonGameMode.setText(TRAINING_MODE_LABEL);
                     prefs.putInteger(GAME_MODE, 2).flush();
                     buttonSpeed.setTouchable(Touchable.enabled);
                 } else if (mode == 2) {
-                    buttonGameMode.setText(PRZYGODOWY);
+                    buttonGameMode.setText(LEVEL_MODE_LABEL);
                     prefs.putInteger(GAME_MODE, 1).flush();
                     buttonSpeed.setTouchable(Touchable.disabled);
                 }
@@ -125,9 +128,9 @@ public class SettingsScreen implements Screen {
     }
     private TextButton createButtonGameMode(Preferences prefs) {
         if (prefs.getInteger(GAME_MODE) == 1) {
-            return new TextButton(PRZYGODOWY, skin);
+            return new TextButton(LEVEL_MODE_LABEL, skin);
         } else {
-            return new TextButton(TRENINGOWY, skin);
+            return new TextButton(TRAINING_MODE_LABEL, skin);
         }
     }
 
