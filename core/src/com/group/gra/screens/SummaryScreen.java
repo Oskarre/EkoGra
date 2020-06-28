@@ -46,10 +46,10 @@ public class SummaryScreen implements Screen {
         stage = new Stage(viewPort, sb);
         atlas = new TextureAtlas("ui/design.atlas");
         skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
+        prefs = Gdx.app.getPreferences(SETTINGS_FILE);
         Gdx.input.setInputProcessor(stage);
 
         createTableWithResults();
-        prefs = Gdx.app.getPreferences(SETTINGS_FILE);
         UIFactory uiFactory = new UIFactory();
         Button returnButton = uiFactory.createReturnButton();
         addReturnButtonListener(returnButton);

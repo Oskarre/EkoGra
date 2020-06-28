@@ -1,0 +1,108 @@
+
+conveyor_animation.png
+size: 4096,2048
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Tasma_Final
+  rotate: false
+  xy: 2, 1030
+  size: 2819, 512
+  orig: 2819, 512
+  offset: 0, 0
+  index: 12
+Tasma_Final
+  rotate: false
+  xy: 2, 516
+  size: 2806, 512
+  orig: 2806, 512
+  offset: 0, 0
+  index: 11
+Tasma_Final
+  rotate: false
+  xy: 2, 2
+  size: 2796, 512
+  orig: 2796, 512
+  offset: 0, 0
+  index: 10
+
+conveyor_animation2.png
+size: 4096,2048
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Tasma_Final
+  rotate: false
+  xy: 2, 1030
+  size: 2784, 512
+  orig: 2784, 512
+  offset: 0, 0
+  index: 9
+Tasma_Final
+  rotate: false
+  xy: 2, 516
+  size: 2772, 512
+  orig: 2772, 512
+  offset: 0, 0
+  index: 8
+Tasma_Final
+  rotate: false
+  xy: 2, 2
+  size: 2759, 512
+  orig: 2759, 512
+  offset: 0, 0
+  index: 7
+
+conveyor_animation3.png
+size: 4096,2048
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Tasma_Final
+  rotate: false
+  xy: 2, 1030
+  size: 2747, 512
+  orig: 2747, 512
+  offset: 0, 0
+  index: 6
+Tasma_Final
+  rotate: false
+  xy: 2, 516
+  size: 2736, 512
+  orig: 2736, 512
+  offset: 0, 0
+  index: 5
+Tasma_Final
+  rotate: false
+  xy: 2, 2
+  size: 2726, 512
+  orig: 2726, 512
+  offset: 0, 0
+  index: 4
+
+conveyor_animation4.png
+size: 4096,2048
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Tasma_Final
+  rotate: false
+  xy: 2, 1030
+  size: 2717, 512
+  orig: 2717, 512
+  offset: 0, 0
+  index: 1
+Tasma_Final
+  rotate: false
+  xy: 2, 516
+  size: 2717, 512
+  orig: 2717, 512
+  offset: 0, 0
+  index: 2
+Tasma_Final
+  rotate: false
+  xy: 2, 2
+  size: 2717, 512
+  orig: 2717, 512
+  offset: 0, 0
+  index: 3
