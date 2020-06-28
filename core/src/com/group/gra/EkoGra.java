@@ -11,8 +11,12 @@ public class EkoGra extends Game {
     public static final String GAME_MODE = "GAME_MODE";
     public static final String GAME_SPEED = "GAME_SPEED";
     public static final String SOUND_ON = "SOUND_ON";
+    public static final String LEVEL = "LEVEL";
+    public static final int LEVEL_MODE = 1;
+    public static final int TRENING_MODE = 2;
     public static final String SETTINGS_FILE = "EkoGra.settings";
     private static final String FIRST_LAUNCH = "firstLaunch";
+
     public SpriteBatch sb;
 
     @Override
@@ -26,8 +30,9 @@ public class EkoGra extends Game {
             prefs.putInteger(GAME_SPEED, 1);
             prefs.putBoolean(SOUND_ON, true);
             prefs.putBoolean(FIRST_LAUNCH, false);
-            prefs.flush();
         }
+        prefs.putInteger(LEVEL,1);
+        prefs.flush();
     }
 
     @Override
