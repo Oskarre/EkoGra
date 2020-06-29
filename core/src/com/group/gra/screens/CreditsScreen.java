@@ -47,7 +47,7 @@ public class CreditsScreen implements Screen {
 
         TextureAtlas atlas = new TextureAtlas("ui/design.atlas");
         Skin skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
-        Label creditsText = new Label("Font: \nhttps://www.fontspace.com/nunito-font-f44025\n" +
+        Label creditsText = new Label("Creators:\nAdam Kotarski\nMichał Wyrtki\nKrystian Krupa\nBartłomiej Stokowy\nOskar Nowacki\n\n" + "Font: \nhttps://www.fontspace.com/nunito-font-f44025\n" +
                 "\nMenu screen music: \n" +
                 "airtone - reCreation - \nhttp://dig.ccmixter.org/files/airtone/59721\n" +
                 "Game screen music: \n" +
