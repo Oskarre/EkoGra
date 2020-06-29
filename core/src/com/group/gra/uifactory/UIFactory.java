@@ -22,25 +22,26 @@ public class UIFactory {
 
     public Image createContainer(String fileName, int x, int y) {
         Image container = new Image(new Texture(fileName));
-        container.setSize(100, 100);
+        container.setSize(125, 125);
         container.setPosition(x, y);
         return container;
     }
 
-    public Button createReturnButton() {
+    public Button createReturnButton(int x,int y,int width,int height) {
         TextureAtlas atlas = new TextureAtlas("ui/design.atlas");
         Skin skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
         Button returnButton =  new Button(skin.get("return",Button.ButtonStyle.class));
-        returnButton.setBounds(750, 0, 50, 50);
+        returnButton.setBounds(x, y, width, height);
         return returnButton;
     }
 
     public Button createPlayButton() {
         TextureAtlas atlas = new TextureAtlas("ui/design.atlas");
         Skin skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
-        Button returnButton =  new Button(skin.get("play",Button.ButtonStyle.class));
-        returnButton.setBounds(750, 60, 50, 50);
-        return returnButton;
+        Button playButton =  new Button(skin.get("play",Button.ButtonStyle.class));
+        playButton.setBounds(600, 200, 150, 150);
+        playButton.setColor(Color.GREEN);
+        return playButton;
     }
 
     public Sprite createSpriteBackground(String fileName) {

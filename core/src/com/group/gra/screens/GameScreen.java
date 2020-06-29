@@ -41,7 +41,6 @@ public class GameScreen implements Screen {
     private Image glassContainer;
     private Image bioContainer;
     private Image mixedContainer;
-    private Sprite conveyor;
     private Music backgroundMusic;
     private Label CorrectMatchesLabel;
     private Label livesLabel;
@@ -89,9 +88,9 @@ public class GameScreen implements Screen {
 
 
     private void addLabels(UIFactory uiFactory) {
-        CorrectMatchesLabel = uiFactory.createLabel("Matches: " + 0, 400, 250);
-        livesLabel = uiFactory.createLabel("Lives: " + 3, 400, 300);
-        informationLabel = uiFactory.createLabel(getInformationLabelText(), 400, 350);
+        CorrectMatchesLabel = uiFactory.createLabel("Matches: " + 0, 600, 400);
+        livesLabel = uiFactory.createLabel("Lives: " + 3, 600, 370);
+        informationLabel = uiFactory.createLabel(getInformationLabelText(), 150, 400);
         stage.addActor(CorrectMatchesLabel);
         stage.addActor(livesLabel);
         stage.addActor(informationLabel);
@@ -113,12 +112,12 @@ public class GameScreen implements Screen {
     }
 
     private void createContainers(UIFactory uiFactory) {
-        plasticContainer = uiFactory.createContainer("plasticContainer.png", 100, 150);
-        paperContainer = uiFactory.createContainer("paperContainer.png", 200, 150);
-        glassContainer = uiFactory.createContainer("glassContainer.png", 300, 150);
+        plasticContainer = uiFactory.createContainer("plasticContainer.png", 25, 150);
+        paperContainer = uiFactory.createContainer("paperContainer.png", 150, 150);
+        glassContainer = uiFactory.createContainer("glassContainer.png", 275, 150);
         hazardousContainer = uiFactory.createContainer("hazardousContainer.png", 400, 150);
-        bioContainer = uiFactory.createContainer("bioContainer.png", 500, 150);
-        mixedContainer = uiFactory.createContainer("container.png", 600, 150);
+        bioContainer = uiFactory.createContainer("bioContainer.png", 525, 150);
+        mixedContainer = uiFactory.createContainer("container.png", 650, 150);
         addContainersAsActors();
     }
 

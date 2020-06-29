@@ -18,7 +18,8 @@
 	"sound_on": { "down": "sound_on", "up": "sound_on" },
 	"sound_off": { "down": "sound_off", "up": "sound_off" },
 	"return": { "down": "return", "up": "return" },
-	"play": { "down": "play", "up": "play" }
+	"play": { "down": "play", "up": "play" },
+	"info": { "down": "info", "up": "info" }
 },
 "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
 	"default": { "parent": "default", "font": "default-font", "fontColor": "white" },

@@ -51,17 +51,16 @@ public class PauseWidget {
 
         buttonSound = createButtonSound();
         addButtonSoundListener(buttonSound);
-
+        buttonSound.setBounds(0,380,100,100);
         pauseWidget = new Window("", skin);
         pauseWidget.setSize(stage.getWidth(),stage.getHeight());
         pauseWidget.setMovable(false);
 
         Table table = new Table(skin);
         pauseWidget.add(table);
-
+        pauseWidget.addActor(buttonSound);
         table.add(buttonResume).row();
         table.add(buttonQuit).row();
-        table.add(buttonSound).row();
 
         buttonClickedSound = Gdx.audio.newSound(Gdx.files.internal("sound/buttonClicked.mp3"));
         buttonClickedSound.setVolume(1,0.1f);
@@ -98,7 +97,7 @@ public class PauseWidget {
         buttonSound.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(prefs.getBoolean(SOUND_ON)) {
+                if(!prefs.getBoolean(SOUND_ON)) {
                     buttonClickedSound.play();
                 }
                 if (prefs.getBoolean(SOUND_ON,true)) {

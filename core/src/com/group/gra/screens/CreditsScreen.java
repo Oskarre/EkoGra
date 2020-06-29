@@ -18,15 +18,15 @@ import com.group.gra.uifactory.UIFactory;
 import static com.group.gra.EkoGra.SETTINGS_FILE;
 import static com.group.gra.EkoGra.SOUND_ON;
 
-public class InstructionScreen implements Screen {
+public class CreditsScreen implements Screen {
+
     public Sprite spriteBackground;
     private SpriteBatch sb;
     private Stage stage;
     private Sound buttonClickedSound;
     private Preferences prefs;
-
-    public InstructionScreen(SpriteBatch sb) {
-        this.sb = sb;
+    public CreditsScreen(SpriteBatch sb) {
+        this.sb=sb;
     }
 
     @Override
@@ -35,12 +35,11 @@ public class InstructionScreen implements Screen {
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
         UIFactory uiFactory = new UIFactory();
-        spriteBackground = uiFactory.createSpriteBackground("Instruction.jpg",800,480);
+        spriteBackground = uiFactory.createSpriteBackground("menuBackground.png",800,480);
         Button returnButton = uiFactory.createReturnButton(750,0,50,50);
         addReturnButtonListener(returnButton);
         stage.addActor(returnButton);
         prefs = Gdx.app.getPreferences(SETTINGS_FILE);
-
         buttonClickedSound = Gdx.audio.newSound(Gdx.files.internal("sound/buttonClicked.mp3"));
         buttonClickedSound.setVolume(1,0.1f);
     }
@@ -92,6 +91,7 @@ public class InstructionScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
+        spriteBackground.getTexture().dispose();
         sb.dispose();
     }
 }

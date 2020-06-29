@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.group.gra.GameManager;
+import com.group.gra.uifactory.UIFactory;
 
 import static com.group.gra.EkoGra.SETTINGS_FILE;
 import static com.group.gra.EkoGra.SOUND_ON;
@@ -35,12 +36,15 @@ public class MenuScreen implements Screen {
 
     @Override
     public void show() {
-        FitViewport viewPort = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        FitViewport viewPort = new FitViewport(800, 480);
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
         atlas = new TextureAtlas("ui/design.atlas");
         skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
         prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+
+        UIFactory uiFactory = new UIFactory();
+        spriteBackground = uiFactory.createSpriteBackground("menuBackground.png",800,480);
 
             backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/menuScreenMusic.mp3"));
             backgroundMusic.setLooping(true);
@@ -55,30 +59,31 @@ public class MenuScreen implements Screen {
 
         TextButton buttonPlay = new TextButton("Play", skin);
         TextButton buttonSettings = new TextButton("Settings", skin);
-        TextButton instructionButton = new TextButton("How to play", skin);
+        TextButton buttonCredits = new TextButton("Credits", skin);
         TextButton buttonQuit = new TextButton("Quit", skin);
-
+        Button buttonInstruction = new Button(skin.get("info",Button.ButtonStyle.class));
+        buttonInstruction.setBounds(0,0,100,100);
         addButtonPlayListener(buttonPlay);
         addButtonSettingsListener(buttonSettings);
-        addButtonInstructionListener(instructionButton);
+        addButtonInstructionListener(buttonInstruction);
         addButtonQuitListener(buttonQuit);
+        addButtonCreditsListener(buttonCredits);
 
         buttonPlay.pad(20);
         buttonSettings.pad(20);
         buttonQuit.pad(20);
-        instructionButton.pad(20);
+        buttonCredits.pad(20);
 
         Table table = new Table(skin);
         table.setFillParent(true);
         table.defaults().pad(10).fillX();
         table.add(buttonPlay).row();
         table.add(buttonSettings).row();
-        table.add(instructionButton).row();
+        table.add(buttonCredits).row();
         table.add(buttonQuit).row();
 
         stage.addActor(table);
-
-        createSpriteBackground();
+        stage.addActor(buttonInstruction);
     }
 
     private void addButtonQuitListener(TextButton buttonQuit) {
@@ -106,7 +111,7 @@ public class MenuScreen implements Screen {
         });
     }
 
-    private void addButtonInstructionListener(TextButton buttonInstruction) {
+    private void addButtonInstructionListener(Button buttonInstruction) {
         buttonInstruction.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -114,6 +119,17 @@ public class MenuScreen implements Screen {
                     buttonClickedSound.play();
                 }
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new InstructionScreen(sb));
+            }
+        });
+    }
+    private void addButtonCreditsListener(Button buttonInstruction) {
+        buttonInstruction.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if(prefs.getBoolean(SOUND_ON)) {
+                    buttonClickedSound.play();
+                }
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new CreditsScreen(sb));
             }
         });
     }
@@ -129,12 +145,6 @@ public class MenuScreen implements Screen {
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(sb, manager.getGameConfiguration()));
             }
         });
-    }
-
-    private void createSpriteBackground() {
-        Texture backgroundTexture = new Texture("menuBackground.png");
-        spriteBackground = new Sprite(backgroundTexture);
-        spriteBackground.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     @Override
@@ -167,7 +177,7 @@ public class MenuScreen implements Screen {
     @Override
     public void hide() {
         if(prefs.getBoolean(SOUND_ON)) {
-            backgroundMusic.pause();
+            backgroundMusic.stop();
         }
     }
 
@@ -177,6 +187,8 @@ public class MenuScreen implements Screen {
         skin.dispose();
         stage.dispose();
         sb.dispose();
+        spriteBackground.getTexture().dispose();
         backgroundMusic.dispose();
     }
+
 }
