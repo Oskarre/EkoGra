@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.group.gra.managers.SoundManager;
 import com.group.gra.uifactory.UIFactory;
 
 import static com.group.gra.EkoGra.*;
@@ -173,11 +174,13 @@ public class SettingsScreen implements Screen {
                 if (prefs.getBoolean(SOUND_ON,true)) {
                     prefs.putBoolean(SOUND_ON, false).flush();
                     buttonSound.setStyle(skin.get("sound_off",Button.ButtonStyle.class));
+                    SoundManager.pauseMenuScreenMusic();
 
                 }
                 else {
                     prefs.putBoolean(SOUND_ON, true).flush();
                     buttonSound.setStyle(skin.get("sound_on",Button.ButtonStyle.class));
+                    SoundManager.playMenuScreenMusic();
                 }
             }
         });

@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.group.gra.GameManager;
+import com.group.gra.managers.SoundManager;
 import com.group.gra.uifactory.UIFactory;
 
 import static com.group.gra.EkoGra.SETTINGS_FILE;
@@ -26,7 +27,6 @@ public class MenuScreen implements Screen {
     private Skin skin;
     private SpriteBatch sb;
     public Sprite spriteBackground;
-    private Music backgroundMusic;
     private Sound buttonClickedSound;
     private Preferences prefs;
 
@@ -46,16 +46,8 @@ public class MenuScreen implements Screen {
         UIFactory uiFactory = new UIFactory();
         spriteBackground = uiFactory.createSpriteBackground("menuBackground.png",800,480);
 
-            backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/menuScreenMusic.mp3"));
-            backgroundMusic.setLooping(true);
-            backgroundMusic.setVolume(0.1f);
-
         buttonClickedSound = Gdx.audio.newSound(Gdx.files.internal("sound/buttonClicked.mp3"));
         buttonClickedSound.setVolume(1,0.1f);
-
-        if(prefs.getBoolean(SOUND_ON)) {
-            backgroundMusic.play();
-        }
 
         TextButton buttonPlay = new TextButton("Play", skin);
         TextButton buttonSettings = new TextButton("Settings", skin);
@@ -140,9 +132,12 @@ public class MenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if(prefs.getBoolean(SOUND_ON)) {
                     buttonClickedSound.play();
+                    SoundManager.pauseMenuScreenMusic();
+                    SoundManager.playGameScreenMusic();
                 }
                 GameManager  manager = new GameManager();
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(sb, manager.getGameConfiguration()));
+
             }
         });
     }
@@ -176,9 +171,6 @@ public class MenuScreen implements Screen {
 
     @Override
     public void hide() {
-        if(prefs.getBoolean(SOUND_ON)) {
-            backgroundMusic.stop();
-        }
     }
 
     @Override
@@ -188,7 +180,6 @@ public class MenuScreen implements Screen {
         stage.dispose();
         sb.dispose();
         spriteBackground.getTexture().dispose();
-        backgroundMusic.dispose();
     }
 
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.group.gra.managers.SoundManager;
 import com.group.gra.screens.SplashScreen;
 
 public class EkoGra extends Game {
@@ -16,7 +17,7 @@ public class EkoGra extends Game {
     public static final int TRENING_MODE = 2;
     public static final String SETTINGS_FILE = "EkoGra.settings";
     private static final String FIRST_LAUNCH = "firstLaunch";
-
+    private Preferences prefs;
     public SpriteBatch sb;
 
     @Override
@@ -24,7 +25,7 @@ public class EkoGra extends Game {
         sb = new SpriteBatch();
         setScreen(new SplashScreen(sb));
 
-        Preferences prefs = Gdx.app.getPreferences(SETTINGS_FILE);
+        prefs = Gdx.app.getPreferences(SETTINGS_FILE);
         if (prefs.getBoolean(FIRST_LAUNCH, true)) {
             prefs.putInteger(GAME_MODE, 1);
             prefs.putInteger(GAME_SPEED, 1);
@@ -33,6 +34,11 @@ public class EkoGra extends Game {
         }
         prefs.putInteger(LEVEL,1);
         prefs.flush();
+
+        SoundManager.initSoundManager();
+        if(prefs.getBoolean(SOUND_ON)) {
+            SoundManager.playMenuScreenMusic();
+        }
     }
 
     @Override

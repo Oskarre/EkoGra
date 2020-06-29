@@ -41,7 +41,6 @@ public class GameScreen implements Screen {
     private Image glassContainer;
     private Image bioContainer;
     private Image mixedContainer;
-    private Music backgroundMusic;
     private Label CorrectMatchesLabel;
     private Label livesLabel;
     private Label informationLabel;
@@ -75,12 +74,8 @@ public class GameScreen implements Screen {
         createContainers(uiFactory);
         addLabels(uiFactory);
 
-        initMusic();
-        if(prefs.getBoolean(SOUND_ON)) {
-            backgroundMusic.play();
-        }
 
-        pauseWidget = new PauseWidget(backgroundMusic,stage,sb);
+        pauseWidget = new PauseWidget(stage,sb);
         pauseWidget.createButtonPause(0, 0, 50, 50);
         DELAY_TIME = gameParameters.getTrashDelay();
         initSounds();
@@ -136,12 +131,6 @@ public class GameScreen implements Screen {
         actorsWithStatus.add(new ActorWithStatus(mixedContainer, ActorStatus.StaticActor));
     }
 
-    private void initMusic() {
-            backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/gameScreenMusic.mp3"));
-            backgroundMusic.setLooping(true);
-            backgroundMusic.setVolume(0.1f);
-    }
-
     private void initSounds() {
         plasticTrashSound = Gdx.audio.newSound(Gdx.files.internal("sound/plastic.mp3"));
         plasticTrashSound.setVolume(1,0.1f);
@@ -155,11 +144,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        if(prefs.getBoolean(SOUND_ON))
-        {
-            backgroundMusic.play();
-        }
-
         TrashGenerator generator = new TrashGenerator();
         Array<Trash> trashArray = generator.generateTrashArray(gameParameters.getNumberOfTrashes());
         for (Trash trash : trashArray) {
@@ -335,9 +319,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
-        if(prefs.getBoolean(SOUND_ON)) {
-            backgroundMusic.pause();
-        }
     }
 
     @Override
@@ -345,6 +326,5 @@ public class GameScreen implements Screen {
         stage.dispose();
         spriteBackground.getTexture().dispose();
         sb.dispose();
-        backgroundMusic.dispose();
     }
 }

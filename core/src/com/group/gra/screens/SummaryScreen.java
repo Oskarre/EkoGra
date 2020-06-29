@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.group.gra.GameManager;
 import com.group.gra.entities.MatchStatus;
 import com.group.gra.entities.Result;
+import com.group.gra.managers.SoundManager;
 import com.group.gra.uifactory.UIFactory;
 
 import static com.group.gra.EkoGra.*;
@@ -90,7 +91,7 @@ public class SummaryScreen implements Screen {
     private void fillTableByUserResult(Table table) {
         int gameMode = prefs.getInteger(GAME_MODE);
         if(isWin && gameMode == LEVEL_MODE){
-            Label label = new Label("Congratulation! You pass the Level " + prefs.getInteger(LEVEL) +"!", skin);
+            Label label = new Label("Congratulation! You passed the Level " + prefs.getInteger(LEVEL) +"!", skin);
             table.add(label);
             table.row();
         }else if( gameMode == LEVEL_MODE){
@@ -116,6 +117,8 @@ public class SummaryScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if(prefs.getBoolean(SOUND_ON)) {
                     buttonClickedSound.play();
+                    SoundManager.stopGameScreenMusic();
+                    SoundManager.playMenuScreenMusic();
                 }
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new MenuScreen(sb));
             }
