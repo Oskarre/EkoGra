@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.group.gra.GameManager;
 import com.group.gra.entities.MatchStatus;
 import com.group.gra.entities.Result;
+import com.group.gra.managers.SoundManager;
 import com.group.gra.uifactory.UIFactory;
 
 import static com.group.gra.EkoGra.*;
@@ -42,7 +43,7 @@ public class SummaryScreen implements Screen {
 
     @Override
     public void show() {
-        FitViewport viewPort = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        FitViewport viewPort = new FitViewport(800, 480);
         stage = new Stage(viewPort, sb);
         atlas = new TextureAtlas("ui/design.atlas");
         skin = new Skin(Gdx.files.internal("ui/design.json"), atlas);
@@ -51,7 +52,7 @@ public class SummaryScreen implements Screen {
 
         createTableWithResults();
         UIFactory uiFactory = new UIFactory();
-        Button returnButton = uiFactory.createReturnButton();
+        Button returnButton = uiFactory.createReturnButton(600, 20, 150, 150);
         addReturnButtonListener(returnButton);
         stage.addActor(returnButton);
         spriteBackground = uiFactory.createSpriteBackground("menuBackground.png");
@@ -75,7 +76,7 @@ public class SummaryScreen implements Screen {
 
 
         Table table = new Table(skin);
-        table.center();
+        table.left();
         table.defaults().pad(2).fillX();
         fillTableByUserResult(table);
         ScrollPane scrollPane = new ScrollPane(table,skin);
@@ -90,11 +91,11 @@ public class SummaryScreen implements Screen {
     private void fillTableByUserResult(Table table) {
         int gameMode = prefs.getInteger(GAME_MODE);
         if(isWin && gameMode == LEVEL_MODE){
-            Label label = new Label("Congratulation! You pass the Level " + prefs.getInteger(LEVEL) +"!", skin);
+            Label label = new Label("Congratulation! You passed the Level " + prefs.getInteger(LEVEL) +"!", skin);
             table.add(label);
             table.row();
         }else if( gameMode == LEVEL_MODE){
-            Label label = new Label("You not pass the Level " + prefs.getInteger(LEVEL) +"!", skin);
+            Label label = new Label("You did not pass the Level " + prefs.getInteger(LEVEL) +"!", skin);
             table.add(label);
             table.row();
         }
@@ -116,6 +117,8 @@ public class SummaryScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if(prefs.getBoolean(SOUND_ON)) {
                     buttonClickedSound.play();
+                    SoundManager.stopGameScreenMusic();
+                    SoundManager.playMenuScreenMusic();
                 }
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new MenuScreen(sb));
             }

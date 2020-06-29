@@ -31,12 +31,12 @@ public class InstructionScreen implements Screen {
 
     @Override
     public void show() {
-        FitViewport viewPort = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        FitViewport viewPort = new FitViewport(800, 480);
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
         UIFactory uiFactory = new UIFactory();
-        spriteBackground = uiFactory.createSpriteBackground("Instruction.jpg");
-        Button returnButton = uiFactory.createReturnButton();
+        spriteBackground = uiFactory.createSpriteBackground("Instruction.jpg",800,480);
+        Button returnButton = uiFactory.createReturnButton(750,0,50,50);
         addReturnButtonListener(returnButton);
         stage.addActor(returnButton);
         prefs = Gdx.app.getPreferences(SETTINGS_FILE);
@@ -92,7 +92,6 @@ public class InstructionScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        sb.dispose();
         sb.dispose();
     }
 }

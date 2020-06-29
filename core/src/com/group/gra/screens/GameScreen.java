@@ -41,8 +41,6 @@ public class GameScreen implements Screen {
     private Image glassContainer;
     private Image bioContainer;
     private Image mixedContainer;
-    private Sprite conveyor;
-    private Music backgroundMusic;
     private Label CorrectMatchesLabel;
     private Label livesLabel;
     private Label informationLabel;
@@ -76,12 +74,8 @@ public class GameScreen implements Screen {
         createContainers(uiFactory);
         addLabels(uiFactory);
 
-        initMusic();
-        if(prefs.getBoolean(SOUND_ON)) {
-            backgroundMusic.play();
-        }
 
-        pauseWidget = new PauseWidget(backgroundMusic,stage,sb);
+        pauseWidget = new PauseWidget(stage,sb);
         pauseWidget.createButtonPause(0, 0, 50, 50);
         DELAY_TIME = gameParameters.getTrashDelay();
         initSounds();
@@ -89,9 +83,9 @@ public class GameScreen implements Screen {
 
 
     private void addLabels(UIFactory uiFactory) {
-        CorrectMatchesLabel = uiFactory.createLabel("Matches: " + 0, 400, 250);
-        livesLabel = uiFactory.createLabel("Lives: " + 3, 400, 300);
-        informationLabel = uiFactory.createLabel(getInformationLabelText(), 400, 350);
+        CorrectMatchesLabel = uiFactory.createLabel("Matches: " + 0, 600, 400);
+        livesLabel = uiFactory.createLabel("Lives: " + 3, 600, 370);
+        informationLabel = uiFactory.createLabel(getInformationLabelText(), 150, 400);
         stage.addActor(CorrectMatchesLabel);
         stage.addActor(livesLabel);
         stage.addActor(informationLabel);
@@ -113,12 +107,12 @@ public class GameScreen implements Screen {
     }
 
     private void createContainers(UIFactory uiFactory) {
-        plasticContainer = uiFactory.createContainer("plasticContainer.png", 100, 150);
-        paperContainer = uiFactory.createContainer("paperContainer.png", 200, 150);
-        glassContainer = uiFactory.createContainer("glassContainer.png", 300, 150);
+        plasticContainer = uiFactory.createContainer("plasticContainer.png", 25, 150);
+        paperContainer = uiFactory.createContainer("paperContainer.png", 150, 150);
+        glassContainer = uiFactory.createContainer("glassContainer.png", 275, 150);
         hazardousContainer = uiFactory.createContainer("hazardousContainer.png", 400, 150);
-        bioContainer = uiFactory.createContainer("bioContainer.png", 500, 150);
-        mixedContainer = uiFactory.createContainer("container.png", 600, 150);
+        bioContainer = uiFactory.createContainer("bioContainer.png", 525, 150);
+        mixedContainer = uiFactory.createContainer("container.png", 650, 150);
         addContainersAsActors();
     }
 
@@ -137,12 +131,6 @@ public class GameScreen implements Screen {
         actorsWithStatus.add(new ActorWithStatus(mixedContainer, ActorStatus.StaticActor));
     }
 
-    private void initMusic() {
-            backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/gameScreenMusic.mp3"));
-            backgroundMusic.setLooping(true);
-            backgroundMusic.setVolume(0.1f);
-    }
-
     private void initSounds() {
         plasticTrashSound = Gdx.audio.newSound(Gdx.files.internal("sound/plastic.mp3"));
         plasticTrashSound.setVolume(1,0.1f);
@@ -156,11 +144,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        if(prefs.getBoolean(SOUND_ON))
-        {
-            backgroundMusic.play();
-        }
-
         TrashGenerator generator = new TrashGenerator();
         Array<Trash> trashArray = generator.generateTrashArray(gameParameters.getNumberOfTrashes());
         for (Trash trash : trashArray) {
@@ -336,9 +319,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
-        if(prefs.getBoolean(SOUND_ON)) {
-            backgroundMusic.pause();
-        }
     }
 
     @Override
@@ -346,6 +326,5 @@ public class GameScreen implements Screen {
         stage.dispose();
         spriteBackground.getTexture().dispose();
         sb.dispose();
-        backgroundMusic.dispose();
     }
 }

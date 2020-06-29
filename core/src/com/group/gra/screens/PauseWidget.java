@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.group.gra.managers.SoundManager;
 
 import static com.group.gra.EkoGra.SETTINGS_FILE;
 import static com.group.gra.EkoGra.SOUND_ON;
@@ -25,15 +26,13 @@ public class PauseWidget {
     private final Window pauseWidget;
     private final Skin skin;
     private final SpriteBatch sb;
-    private final Music backgroundMusic;
     private Stage stage;
     private final TextButton buttonResume;
     private boolean pause;
     private Sound buttonClickedSound;
     private Preferences prefs;
 
-    PauseWidget(Music music, Stage gameScreenStage, SpriteBatch gameScreenSb) {
-        backgroundMusic = music;
+    PauseWidget( Stage gameScreenStage, SpriteBatch gameScreenSb) {
         stage = gameScreenStage;
         sb = gameScreenSb;
         pause=false;
@@ -51,17 +50,16 @@ public class PauseWidget {
 
         buttonSound = createButtonSound();
         addButtonSoundListener(buttonSound);
-
+        buttonSound.setBounds(0,380,100,100);
         pauseWidget = new Window("", skin);
         pauseWidget.setSize(stage.getWidth(),stage.getHeight());
         pauseWidget.setMovable(false);
 
         Table table = new Table(skin);
         pauseWidget.add(table);
-
+        pauseWidget.addActor(buttonSound);
         table.add(buttonResume).row();
         table.add(buttonQuit).row();
-        table.add(buttonSound).row();
 
         buttonClickedSound = Gdx.audio.newSound(Gdx.files.internal("sound/buttonClicked.mp3"));
         buttonClickedSound.setVolume(1,0.1f);
@@ -88,8 +86,11 @@ public class PauseWidget {
             public void clicked(InputEvent event, float x, float y) {
                 if(prefs.getBoolean(SOUND_ON)) {
                     buttonClickedSound.play();
+                    SoundManager.stopGameScreenMusic();
+                    SoundManager.playMenuScreenMusic();
                 }
                 ((Game) Gdx.app.getApplicationListener()).setScreen(new MenuScreen(sb));
+
             }
         });
     }
@@ -98,18 +99,18 @@ public class PauseWidget {
         buttonSound.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(prefs.getBoolean(SOUND_ON)) {
+                if(!prefs.getBoolean(SOUND_ON)) {
                     buttonClickedSound.play();
                 }
                 if (prefs.getBoolean(SOUND_ON,true)) {
                     prefs.putBoolean(SOUND_ON, false).flush();
                     buttonSound.setStyle(skin.get("sound_off",Button.ButtonStyle.class));
-                    backgroundMusic.stop();
+                    SoundManager.pauseGameScreenMusic();
                 }
                 else {
                     prefs.putBoolean(SOUND_ON, true).flush();
                     buttonSound.setStyle(skin.get("sound_on",Button.ButtonStyle.class));
-                    backgroundMusic.play();
+                    SoundManager.playGameScreenMusic();
                 }
             }
         });

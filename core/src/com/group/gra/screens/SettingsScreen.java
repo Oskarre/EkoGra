@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.group.gra.managers.SoundManager;
 import com.group.gra.uifactory.UIFactory;
 
 import static com.group.gra.EkoGra.*;
@@ -38,7 +39,7 @@ public class SettingsScreen implements Screen {
 
     @Override
     public void show() {
-        FitViewport viewPort = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        FitViewport viewPort = new FitViewport(800, 480);
         stage = new Stage(viewPort, sb);
         Gdx.input.setInputProcessor(stage);
         atlas = new TextureAtlas("ui/design.atlas");
@@ -49,6 +50,11 @@ public class SettingsScreen implements Screen {
         final TextButton buttonGameMode = createButtonGameMode();
         final TextButton buttonSpeed = createButtonSpeed();
 
+        Button buttonSound = createButtonSound();
+
+        buttonSound.setBounds(0,380,100,100);
+
+        addButtonSoundListener(buttonSound);
         addButtonGameModeListener(buttonGameMode, buttonSpeed);
         addButtonSpeedListener(buttonSpeed);
         addButtonComeBackListener(buttonComeBack);
@@ -58,7 +64,7 @@ public class SettingsScreen implements Screen {
         buttonComeBack.pad(20);
 
         UIFactory uiFactory = new UIFactory();
-        spriteBackground = uiFactory.createSpriteBackground("menuBackground.png");
+        spriteBackground = uiFactory.createSpriteBackground("menuBackground.png",800,480);
         Label labelScreen = new Label("Settings", skin);
         labelScreen.setColor(Color.BLACK);
         Label labelGameMode = new Label("Game mode:", skin);
@@ -83,8 +89,9 @@ public class SettingsScreen implements Screen {
         table.add(buttonComeBack);
         table.add().row();
         table.center();
-        stage.addActor(table);
 
+        stage.addActor(table);
+        stage.addActor(buttonSound);
         buttonClickedSound = Gdx.audio.newSound(Gdx.files.internal("sound/buttonClicked.mp3"));
         buttonClickedSound.setVolume(1,0.1f);
     }
@@ -155,6 +162,35 @@ public class SettingsScreen implements Screen {
             buttonSpeed.setTouchable(Touchable.enabled);
         }
         return buttonSpeed;
+    }
+
+    private void addButtonSoundListener(final Button buttonSound) {
+        buttonSound.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if(!prefs.getBoolean(SOUND_ON)) {
+                    buttonClickedSound.play();
+                }
+                if (prefs.getBoolean(SOUND_ON,true)) {
+                    prefs.putBoolean(SOUND_ON, false).flush();
+                    buttonSound.setStyle(skin.get("sound_off",Button.ButtonStyle.class));
+                    SoundManager.pauseMenuScreenMusic();
+
+                }
+                else {
+                    prefs.putBoolean(SOUND_ON, true).flush();
+                    buttonSound.setStyle(skin.get("sound_on",Button.ButtonStyle.class));
+                    SoundManager.playMenuScreenMusic();
+                }
+            }
+        });
+    }
+    private Button createButtonSound() {
+        if (prefs.getBoolean(SOUND_ON,true)) {
+            return new Button(skin.get("sound_on",Button.ButtonStyle.class));
+        } else {
+            return new Button(skin.get("sound_off",Button.ButtonStyle.class));
+        }
     }
 
     @Override
